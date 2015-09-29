@@ -8,4 +8,4 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
-nc -kl -p $1 | ffmpeg -i - -vcodec copy -f h264 -
+nc -kl -p $1 | ffmpeg -i - -f rtp rtp://localhost:9000 > cam.sdp
