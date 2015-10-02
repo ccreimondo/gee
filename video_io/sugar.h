@@ -1,6 +1,7 @@
 #ifndef SUGAR_H
 #define SUGAR_H
 
+#include <cstdio>
 #include <sstream>
 #include <string>
 
