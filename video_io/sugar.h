@@ -16,7 +16,7 @@ string NumberToString(T Number)
     return ss.str();
 }
 
-string GetTimeNow(const string fmt="%d-%m-%Y_%I:%M:%S")
+string GetTimeNow(const string fmt="%d-%m-%Y %I:%M:%S")
 {
     time_t rawtime;
     struct tm *timeinfo;
