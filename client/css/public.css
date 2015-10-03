@@ -1,0 +1,133 @@
+﻿::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-track-piece { background: rgba(0, 0, 0, 0); }
+::-webkit-scrollbar-thumb { 
+    width:5px; 
+    background:rgba(0, 0, 0, 0.1); 
+    border-radius: 3px;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    background: rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.main {
+    width: 100%;
+    height: 668px;
+}
+
+.video_container {
+    position: relative;
+    width: 70%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    float: left;
+}
+
+.result_container {
+    width: 30%;
+    height: 100%;
+    float: left;
+}
+
+.target_photo {
+    position: absolute;
+    left: 90px;
+    top: 60px;
+    width: 60px;
+    height: 160px;
+    border: 4px solid green;
+    z-index: 10;
+    background: url('../imgs/target.bmp');
+    background-size: 60px 160px;
+}
+
+.result_window {
+    position: relative;
+    width: 325px;
+    height: 600px;
+    margin-top: 30px;
+    /*background: rgba(0, 0, 217, 0.3);*/
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.result_list {
+    position: rrelative;
+    min-height: auto;
+    width: auto;
+}
+
+.result_list .result_item {
+    width: 320px;
+    height: 180px;
+    margin-bottom: 10px;
+    background: rgba(0 , 0, 0, 0.7);
+}
+
+
+
+/******************************************************************************/
+.html5_video {
+    position: absolute;
+    /*margin: 130px 115px;*/
+    top: 130px;
+    left: 115px;
+    height: 360px;
+}
+#myVideo {
+    /*position: absolute;*/
+    width: 640px;
+    height: 360px;
+    z-index: 0;
+}
+.tooltip {
+    width: 600px;
+    height: 60px;
+    position: absolute;
+    bottom: 0;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 10;
+}
+.processbar {
+    position: relative;
+    padding: 8px 10px;
+    width: calc(100% - 20px);
+    height: calc(20px - 16px);
+    background: rgba(255, 255, 255, 0.7);
+}
+button {
+    width: 60px;
+    height: 40px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+.play {
+    background: red;
+}
+.pause {
+    background: blue;
+}
+
+.process {
+    height: 4px;
+    border-radius: 3px; 
+    cursor: pointer;
+}
+.cur_process {
+    width: 0;
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    background: rgba(255, 0, 0, 0.6);
+}
+.tol_process {
+    /*float: left;*/
+    display: block;
+    width: 580px;
+    background: rgba(0, 0, 0, 0.3);
+}
