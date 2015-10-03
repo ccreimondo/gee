@@ -150,6 +150,8 @@ void Dispatcher()
 
     // create Background Subtractor objects
     g_pMOG2 = createBackgroundSubtractorMOG2(); // MOG2 approach
+    HOGDescriptor hog;
+    hog.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
 
     while ((char)g_keyboard != 'q' && (char)g_keyboard != 27) {
         // read the current frame
@@ -227,6 +229,7 @@ void Dispatcher()
                 Point(15, 15), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0));
 
         // find the boundary
+        /*
         vector<vector<Point> > contours;
         vector<Vec4i> hierarchy;
         findContours(g_fg_mask_MOG2.clone(), contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
@@ -237,11 +240,17 @@ void Dispatcher()
             Rect rect(boundingRect(contours[i]));
             rectangle(g_frame, rect, Scalar(0, 255, 0), 2);
         }
+        */
+        vector<Rect> found_rects;
+        hog.detectMultiScale(g_frame, found_rects, 0, Size(8, 8), Size(32, 32), 1.05, 2);
+        for (int i = 0; i < found_rects.size(); i++) {
+            rectangle(g_frame, found_rects[i], Scalar(0, 255, 255), 2);
+        }
 
         // show the current frame and the fg masks
         imshow("Frame", g_frame);
         // threshold(g_fg_mask_MOG2, g_fg_mask_MOG2, 25, 255, THRESH_BINARY);
-        imshow("FG Mask MOG 2", g_fg_mask_MOG2);
+        // imshow("FG Mask MOG 2", g_fg_mask_MOG2);
         // get the input from the keyboard
         g_keyboard = waitKey(1);
     }
