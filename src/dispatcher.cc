@@ -7,7 +7,8 @@
 #include <vector>
 
 #include <opencv2/opencv.hpp>
-#include "sugar.h"
+#include "sugar/sugar.h"
+#include "extractor.h"
 
 using namespace cv;
 using std::string;
@@ -39,80 +40,13 @@ int main()
     exit(0);
 }
 
-// Judge keyframe by diff frame.
-//
-bool FrameDiff(Mat &frame_t1, Mat &frame_t2)
-{
-    Mat _frame_t1, _frame_t2, abs_ans;
-
-    cvtColor(frame_t1, _frame_t1, COLOR_RGB2GRAY);
-    cvtColor(frame_t2, _frame_t2, COLOR_RGB2GRAY);
-
-    absdiff(_frame_t1, _frame_t2, abs_ans);
-    cout << abs_ans << endl;
-
-    return false;
-}
-
-// Judge keyframe by diff histogram of frames.
-//
-bool HistDiff(Mat &frame_t1, Mat &frame_t2)
-{
-    Mat hsv_f_t1, hsv_f_t2;
-
-    // convert to HSV
-    cvtColor(frame_t1, hsv_f_t1, COLOR_BGR2HSV);
-    cvtColor(frame_t2, hsv_f_t2, COLOR_BGR2HSV);
-
-    // using 50 bins for hue and 60 for saturation
-    int h_bins = 50; int s_bins = 60;
-    int hist_size[] = { h_bins, s_bins };
-
-    // hue varies from 0 to 179, saturation from 0 to 255
-    float h_ranges[] = { 0, 180 };
-    float s_ranges[] = { 0, 256 };
-
-    const float *ranges[] = { h_ranges, s_ranges };
-
-    // use the o-th and 1-st channels
-    int channels[] = { 0, 1 };
-
-    // histograms
-    MatND hist_f_t1;
-    MatND hist_f_t2;
-
-    // calculate the histograms for the HSV images
-    calcHist(&hsv_f_t1, 1, channels, Mat(), hist_f_t1, 2, hist_size, ranges, true, false);
-    normalize(hist_f_t1, hist_f_t1, 0, 1, NORM_MINMAX, -1, Mat());
-
-    calcHist(&hsv_f_t2, 1, channels, Mat(), hist_f_t2, 2, hist_size, ranges, true, false);
-    normalize(hist_f_t2, hist_f_t2, 0, 1, NORM_MINMAX, -1, Mat());
-
-    // $start test
-    // apply the histogram comparison methods
-    /*
-    for (int i = 0; i < 4; i++ )
-    {
-        int compare_method = i;
-        double f1_f2 = compareHist(hist_f_t1, hist_f_t2, compare_method);
-        fprintf(stdout, " Method [%d] f1-f2 : %f \n", i, f1_f2);
-    }
-    */
-    // $end test
-
-    double f1_f2= compareHist(hist_f_t1, hist_f_t2, CV_COMP_CORREL);
-    if (f1_f2 >= 0.95) return false;
-
-    return true;
-}
-
 // Dispatcher.
 //
 void Dispatcher()
 {
     char video_stream_addr[kBufferSize];
     // sprintf(video_stream_addr, "%s%s", kDirPrefix, "cam.sdp");
-    sprintf(video_stream_addr, "%s%s", kDirPrefix, "example/videos/300w.flv");
+    sprintf(video_stream_addr, "%s%s", kDirPrefix, "example/videos/WP_20151002_09_40_51_Pro_lq.mp4");
 
     // create video stream capture
     VideoCapture cap(video_stream_addr);
@@ -121,20 +55,22 @@ void Dispatcher()
         exit(1);
     }
 
+    // init extractor
+    Extractor extractor;
+
     char video_saving_addr[kBufferSize];
-    sprintf(video_saving_addr, "%s%s", kDirPrefix, "videos/");
+    sprintf(video_saving_addr, "%s%s", kDirPrefix, "out/videos/");
     // create video stream writer
     VideoWriter writer;
-
-    // define where to save pictures
-    char pic_saving_addr[kBufferSize];
-    sprintf(pic_saving_addr, "%s%s", kDirPrefix, "pictures/");
+    writer.open("1-raw.h264", CV_FOURCC('X', '2', '6', '4'), cap.get(CV_CAP_PROP_FPS),
+                Size(cap.get(CV_CAP_PROP_FRAME_WIDTH), cap.get(CV_CAP_PROP_FRAME_HEIGHT)));
 
     // init timestamp
     double timestamp_before = cap.get(CV_CAP_PROP_POS_MSEC);
     double timestamp_after = cap.get(CV_CAP_PROP_POS_MSEC);
 
     // start the first writer
+    /*
     char video_name_1st[kBufferSize];
     sprintf(video_name_1st, "%s%.0lf-%.0lf.%s",
             video_saving_addr, timestamp_after, timestamp_after+60000, "h264");
@@ -147,11 +83,10 @@ void Dispatcher()
         LogError("Fail to open the first saving file!");
         exit(1);
     }
+    */
 
     // create Background Subtractor objects
-    g_pMOG2 = createBackgroundSubtractorMOG2(); // MOG2 approach
-    HOGDescriptor hog;
-    hog.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
+    // g_pMOG2 = createBackgroundSubtractorMOG2(); // MOG2 approach
 
     while ((char)g_keyboard != 'q' && (char)g_keyboard != 27) {
         // read the current frame
@@ -192,7 +127,9 @@ void Dispatcher()
         */
 
         // Stage 2 - extract key frame.
+        extractor.handler(g_frame);
         // init frame_before and save the fisrt frame
+        /*
         if (g_frame_before.empty()) {
             g_frame_before = g_frame.clone();
 
@@ -218,10 +155,11 @@ void Dispatcher()
         }
         // show key frame change
         imshow("Key Frame", g_frame_before);
+        */
 
         // Stage 3 - motion detect and output.
         // update the backgroud model
-        g_pMOG2->apply(g_frame, g_fg_mask_MOG2);
+        // g_pMOG2->apply(g_frame, g_fg_mask_MOG2);
         // get the frame number and write in on the current frame
         rectangle(g_frame, Point(10, 2), Point(100, 20),
                   Scalar(255, 255, 255), -1);
@@ -241,13 +179,9 @@ void Dispatcher()
             rectangle(g_frame, rect, Scalar(0, 255, 0), 2);
         }
         */
-        vector<Rect> found_rects;
-        hog.detectMultiScale(g_frame, found_rects, 0, Size(8, 8), Size(32, 32), 1.05, 2);
-        for (int i = 0; i < found_rects.size(); i++) {
-            rectangle(g_frame, found_rects[i], Scalar(0, 255, 255), 2);
-        }
 
         // show the current frame and the fg masks
+        // writer << g_frame;
         imshow("Frame", g_frame);
         // threshold(g_fg_mask_MOG2, g_fg_mask_MOG2, 25, 255, THRESH_BINARY);
         // imshow("FG Mask MOG 2", g_fg_mask_MOG2);

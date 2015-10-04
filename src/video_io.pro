@@ -13,8 +13,11 @@ LIBS += -L/usr/local/lib -lopencv_shape -lopencv_stitching \
         -lopencv_core -lopencv_hal
 
 SOURCES += \
-    dispatcher.cc
+    dispatcher.cc \
+    extractor.cc
 
 HEADERS += \
-    sugar.h
+    sugar.h \
+    sugar/sugar.h \
+    extractor.h
 
