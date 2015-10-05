@@ -14,7 +14,6 @@
 #define EXTRACTOR_H
 
 #include <vector>
-
 #include <opencv2/opencv.hpp>
 
 using std::vector;

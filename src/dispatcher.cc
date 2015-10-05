@@ -7,8 +7,10 @@
 #include <vector>
 
 #include <opencv2/opencv.hpp>
+#include <Python.h>
 #include "sugar/sugar.h"
 #include "extractor.h"
+#include "pywrapper/dbconn.h"
 
 using namespace cv;
 using std::string;
@@ -30,12 +32,14 @@ int g_keyboard;
 void Dispatcher();
 // $start debug
 void Test();
+void PyTest();
 // $end debug
 
 int main()
 {
-    Dispatcher();
+    // Dispatcher();
     // Test();
+    PyTest();
 
     exit(0);
 }
@@ -208,4 +212,14 @@ void Test()
     imshow("-_-", frame_t1);
     imshow("-_-", frame_t2);
     FrameDiff(frame_t1, frame_t2);
+}
+
+void PyTest()
+{
+    Py_Initialize();
+    initdbconn();
+    py_print("This is c++");
+    // init_table();
+    has_table("test");
+    Py_Finalize();
 }
