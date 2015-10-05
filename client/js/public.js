@@ -76,14 +76,10 @@ var humWidth = 30;
 var humHeight = 80;
 
 $('.screenshot').click(function () {
-    
-    // console.log(_videoWidth)
-    // ctx.fillStyle = '#fff';
-    // ctx.fillRect(0, 0, _videoWidth, _videoHeight);
-    // ctx.drawImage(video, 0, 0, _videoWidth, _videoHeight, 0, 0, cvWidth, cvHeight);
-    // 
-   
-    
+    screenShot(0);
+});
+
+function screenShot(index) {
     var newCanvas = document.createElement('canvas');
     $(newCanvas).css({
         'width': cvWidth, 
@@ -109,30 +105,61 @@ $('.screenshot').click(function () {
     path.lineTo(cvWidth, 0);
     path.lineTo(0, 0);
     
-    
     newCtx.fill(path);
-    // newCtx.clearRect(30, 30, 40, 80);
     
-    // draw human
-    // var humCanvas = document.createElement('canvas');
-    // var humCtx = humCanvas.getContext('2d');
-    // 
-    // humCtx.fillStyle = "rgba(0, 0, 125, 0.3)";
-    // humCtx.fillRect(0, 0, cvWidth, cvHeight);
-    // humCtx.clearRect(30, 30, 40, 80);
+    console.log($('.result_list')[index])
+    $($('.result_list')[index]).append(newCanvas);
     
-    // $(newCanvas).append(humCtx);
-    
-    $('.result_list').append(newCanvas);
-    
-    // add animation
-    console.log($('.result_list').scrollTop())
-    
+    // add animation    
     $(newCanvas).fadeIn(500);
     
-    var listHeight = $('.result_list').height();
-    // $('.result_window').scrollTop(listHeight);
-    $('.result_window').animate({
+    var listHeight = $($('.result_list')[index]).height();
+    console.log(listHeight)
+    $($('.result_window')[index]).animate({
         scrollTop: listHeight
     }, 700);
-})
+}
+
+function addTarget(container, src) {
+    var item = $('<img class="target_item">');
+    item.attr('src', src);
+    
+    container.append(item);
+    
+    // animate
+    item.fadeIn(500);
+    
+    var listHeight = container.height();
+    console.log(listHeight)
+    container.parent().animate({
+        scrollTop: listHeight
+    }, 300);
+    
+    // addListenEvent
+    item.click(function() {
+        console.log(item.attr('src'));
+    });    
+}
+
+var i = 0;
+setInterval(function () {
+    // addTarget($('.target_list'), './imgs/target_2.bmp');
+}, 200);
+
+
+// switch the camera
+function switchCamera(button, window) {
+    $('.one_camera').css({background: 'rgba(0, 0, 255, 0.4)'});
+    $(button).css({background: 'rgba(255, 0, 0, 0.4)'});
+    
+    $('.result_window').css({display: 'none'});
+    $(window).css({display: 'block'});
+}
+
+// addListenEvent
+$('.one_camera').click(function () {
+    var className = this.className;
+    var a = className.split(' ');
+    
+    switchCamera(this, $('.result_window')[a[1]]);
+});
