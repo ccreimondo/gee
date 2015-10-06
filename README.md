@@ -1,2 +1,2 @@
-# gee
-Power contest
+gee
+===
