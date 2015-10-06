@@ -7,10 +7,10 @@
 #include <vector>
 
 #include <opencv2/opencv.hpp>
-#include <Python.h>
+//#include <Python.h>
 #include "sugar/sugar.h"
 #include "extractor.h"
-#include "pywrapper/dbconn.h"
+//#include "pywrapper/dbconn.h"
 
 using namespace cv;
 using std::string;
@@ -32,14 +32,14 @@ int g_keyboard;
 void Dispatcher();
 // $start debug
 void Test();
-void PyTest();
+//void PyTest();
 // $end debug
 
 int main()
 {
-    // Dispatcher();
+     Dispatcher();
     // Test();
-    PyTest();
+    //PyTest();
 
     exit(0);
 }
@@ -214,12 +214,12 @@ void Test()
     FrameDiff(frame_t1, frame_t2);
 }
 
-void PyTest()
-{
-    Py_Initialize();
-    initdbconn();
-    py_print("This is c++");
-    // init_table();
-    has_table("test");
-    Py_Finalize();
-}
+//void PyTest()
+//{
+//    Py_Initialize();
+//    initdbconn();
+//    py_print("This is c++");
+//    // init_table();
+//    has_table("test");
+//    Py_Finalize();
+//}

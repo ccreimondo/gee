@@ -23,7 +23,7 @@ string GetTimeNow(const string fmt="%d-%m-%Y %I:%M:%S")
     char buffer[80];
 
     time(&rawtime);
-    timeinfo = localtime(&rawtime);
+   // timeinfo = localtime(&rawtime);
 
     strftime(buffer, 80, fmt.c_str(), timeinfo);
     string str(buffer);
