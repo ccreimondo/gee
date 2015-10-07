@@ -5,7 +5,7 @@ CONFIG -= qt
 
 INCLUDEPATH += /usr/loca/opencv \
         /usr/local/opencv2/ \
-        /home/reimondo/.pyenv/include/python2.7/
+        /usr/local/boost_1_59_0
 
 LIBS += -L/usr/local/lib -lopencv_shape -lopencv_stitching \
         -lopencv_objdetect -lopencv_superres -lopencv_videostab \
@@ -13,15 +13,33 @@ LIBS += -L/usr/local/lib -lopencv_shape -lopencv_stitching \
         -lopencv_videoio -lopencv_imgcodecs -lopencv_video \
         -lopencv_photo -lopencv_ml -lopencv_imgproc -lopencv_flann \
         -lopencv_core -lopencv_hal \
-        -L/home/reimondo/.pyenv/lib -lpython2.7
+        -L/usr/local/boost_1_59_0/lib -lboost_system
 
 SOURCES += \
     dispatcher.cc \
     extractor.cc \
-    pywrapper/dbconn.c
+    redisclient/impl/redisasyncclient.cpp \
+    redisclient/impl/redisclientimpl.cpp \
+    redisclient/impl/redisparser.cpp \
+    redisclient/impl/redissyncclient.cpp \
+    redisclient/impl/redisvalue.cpp \
+    gdatatype.cc \
+    videostreamhandler.cc \
+    persistor.cc
 
 HEADERS += \
     sugar.h \
     sugar/sugar.h \
     extractor.h \
-    pywrapper/dbconn.h
+    redisclient/config.h \
+    redisclient/redisasyncclient.h \
+    redisclient/redisbuffer.h \
+    redisclient/redisclient.h \
+    redisclient/redisparser.h \
+    redisclient/redissyncclient.h \
+    redisclient/redisvalue.h \
+    redisclient/version.h \
+    redisclient/impl/redisclientimpl.h \
+    gdatatype.h \
+    videostreamhandler.h \
+    persistor.h
