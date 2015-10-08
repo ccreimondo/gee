@@ -1,10 +1,4 @@
-#include <vector>
-
-#include <opencv2/opencv.hpp>
 #include "extractor.h"
-
-using std::vector;
-using namespace cv;
 
 Extractor::Extractor()
 {
@@ -25,7 +19,7 @@ void Extractor::set_frame_refer(const Mat &frame)
     is_init_ = true;
 }
 
-void Extractor::handler(const Mat &frame)
+void Extractor::handler(const Mat &frame, string cam_id, string video_id, size_t frame_pos)
 {
     // set frame reference
     if (!is_init_) {
@@ -37,16 +31,72 @@ void Extractor::handler(const Mat &frame)
         vector<Rect> found_rects(HumanDetect(frame));
         // TODO (@Zhiqiang He): cut
         // $start debug
-        Mat frame_clone(frame.clone());
+     /*   Mat frame_clone(frame.clone());
         for (int i = 0; i < found_rects.size(); i++) {
             rectangle(frame_clone, found_rects[i], Scalar(0, 255, 255), 2);
         }
-        imshow("Extractor Debug", frame_clone);
+        imshow("Extractor Debug", frame_clone);*/
+
+		for (int i = 0; i < found_rects.size(); i++) {
+			
+			Mat person_image;
+			frame(found_rects[i]).copyTo(person_image);
+
+			imshow("Extractor Debug", person_image);
+			//get feature of each person image
+			Mat person_feature=get_feature_.getFeature(person_image);
+
+			//get personshot
+			string id = get_id(cam_id, video_id, frame_pos, i);
+
+			vector<int> rect;
+			rect.push_back(found_rects[i].x);
+			rect.push_back(found_rects[i].y);
+			rect.push_back(found_rects[i].x + found_rects[i].width);
+			rect.push_back(found_rects[i].y + found_rects[i].height);
+
+			cout << id << endl;
+			cout << rect[0] << " " << rect[1] << " " << rect[2] << " " << rect[3] << endl;
+			cout << person_feature << endl;
+
+			PersonShot person_shot_(id, cam_id, video_id, frame_pos, rect, person_feature);
+
+			//save
+			// TODO:save personshot
+
+
+		}
         // $end debug
 
         // update frame refer
         set_frame_refer(frame);
     }
+}
+//form id
+//
+string Extractor::get_id(const string cam_id, const string video_id, const size_t frame_pos, int sequence) {
+	stringstream ss, sss;
+	string str_frame_pos, str_sequence;
+	ss << frame_pos;
+	ss >> str_frame_pos;
+	if (str_frame_pos.size() == 1) {
+		str_frame_pos = "0000" + str_frame_pos;
+	}
+	if (str_frame_pos.size() == 2) {
+		str_frame_pos = "000" + str_frame_pos;
+	}
+	if (str_frame_pos.size() == 3) {
+		str_frame_pos = "00" + str_frame_pos;
+	}
+	if (str_frame_pos.size() == 4) {
+		str_frame_pos = "0" + str_frame_pos;
+	}
+	sss << sequence;
+	sss >> str_sequence;
+	if (str_sequence.size() == 1) {
+		str_sequence = "0" + str_sequence;
+	}
+	return cam_id + video_id + str_frame_pos + str_sequence;
 }
 
 // Judge keyframe by diff frame.

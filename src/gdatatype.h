@@ -1,8 +1,10 @@
+#pragma once
 #ifndef GDATATYPE_H
 #define GDATATYPE_H
 
 #include <string>
 #include <vector>
+#include <sstream>
 
 #include <opencv2/opencv.hpp>
 
@@ -27,7 +29,7 @@ public:
     // rect: point_1 (rect[0], rect[1]), point_2 (rect[2], rect[3])
     PersonShot(string id, string cam_id, string video_id,
                size_t frame_pos, vector<int> rect, cv::Mat &proper_vector);
-    ~PersonShot();
+    ~PersonShot(){}
 
     string get_id() { return id_; }
     string get_cam_id() { return cam_id_; }
