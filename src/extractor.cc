@@ -1,9 +1,11 @@
 #include <sstream>
 #include "extractor.h"
+#include "memcache.h"
 
 using std::stringstream;
 
 Extractor::Extractor()
+    : memcache_(io_service_)
 {
     is_init_ = false;
 }
@@ -55,13 +57,14 @@ void Extractor::handler(const Mat &frame, string cam_id,
 			rect.push_back(found_rects[i].x + found_rects[i].width);
 			rect.push_back(found_rects[i].y + found_rects[i].height);
 
-			cout << id << endl;
-			cout << rect[0] << " " << rect[1] << " " << rect[2] << " " << rect[3] << endl;
-			cout << person_feature << endl;
+            // cout << id << endl;
+            // cout << rect[0] << " " << rect[1] << " " << rect[2] << " " << rect[3] << endl;
+            // cout << person_feature << endl;
 
-			PersonShot person_shot_(id, cam_id, video_id, frame_pos, rect, person_feature);
-
-			// TODO:save personshot
+            PersonShot person_shot(id, cam_id, video_id,
+                                   frame_pos, rect, person_feature);
+            // MemCache memcache_(io_service_);
+            memcache_.save(person_shot);
 		}
 
         // update frame refer

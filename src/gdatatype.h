@@ -38,6 +38,7 @@ public:
     cv::Mat get_proper_vector() { return proper_vector_; }
 
     // covert Mat to float array
+    // TODO (@Xinqian Gu): please debug here
     FloatArray mat_to_array();
 private:
     string id_, cam_id_, video_id_;
@@ -47,8 +48,8 @@ private:
 };
 
 //
-//  Data type for Persister:
-//      VideoStreamMeta, VideoTime
+//  Data type for VideoCacher:
+//      VideoStreamMeta, VideoTime, VideoShot
 //
 struct VideoStreamMeta {
     string format;      // input video stream format, we prefer H.264
@@ -56,9 +57,18 @@ struct VideoStreamMeta {
     int solution[2];    // we prefer 1280x720
 };
 
-
+// TODO (@Zhiqiang He): ~
 struct VideoTime {
     string time_start, time_end;    // we prefer 10min per piece
+};
+
+class VideoShot {
+public:
+    VideoShot() {}
+
+    ~VideoShot() {}
+
+private:
 };
 
 #endif // GDATATYPE_H

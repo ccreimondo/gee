@@ -15,9 +15,12 @@
 #include <vector>
 #include <string>
 #include <opencv2/opencv.hpp>
+#include <boost/asio.hpp>
 
+#include "redisclient/redissyncclient.h"
 #include "getfeature.h"
 #include "gdatatype.h"
+#include "memcache.h"
 
 using namespace std;
 using namespace cv;
@@ -45,6 +48,10 @@ private:
     Mat frame_refer_;  // frame reference
     bool is_init_;  // default false
 	GetFeature get_feature_;	//using to get feature and pca
+
+    // to do memncache
+    boost::asio::io_service io_service_;
+    MemCache memcache_;
 };
 
 // Judge keyframe by diff frame.

@@ -93,6 +93,7 @@ void VideoStreamHandler(const string &sdp_addr, const string &cam_id)
                             curr_frame);
         extractor.handler(curr_frame, cam_id, video_id, frame_counter);
 
+        // TODO (@Zhiqiang He): no good solution
         VideoForwarder(cam_id, video_id,
                        video_time, video_stream_meta,
                        curr_frame);
@@ -180,7 +181,6 @@ void VideoCacher::handler(const string &cam_id,
         init(cam_id, video_id, video_time, video_stream_meta);
     } else {
         // continue to write video to disk
-        cout << "Write a frame" << endl;
         writer << frame;
     }
 }
