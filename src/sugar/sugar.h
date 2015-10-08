@@ -16,21 +16,12 @@ string NumberToString(T Number)
     return ss.str();
 }
 
-string GetTimeNow(const string fmt="%d%m%Y%I%M%S")
-{
-    time_t rawtime;
-    struct tm *timeinfo;
-    char buffer[80];
+// get time now
+//
+string GetTimeNow(const string fmt="%d-%m-%Y %I:%M:%S");
 
-    time(&rawtime);
-    timeinfo = localtime(&rawtime);
-
-    strftime(buffer, 80, fmt.c_str(), timeinfo);
-    string str(buffer);
-
-    return str;
-}
-
+// log handler
+//
 inline void LogInfo(const char *info_name, const char *info)
 {
     fprintf(stdout, "INFO - %s - %s\n", info_name, info);

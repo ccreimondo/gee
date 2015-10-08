@@ -2,18 +2,21 @@ TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
+CONFIG += c++11
 
 INCLUDEPATH += /usr/loca/opencv \
         /usr/local/opencv2/ \
         /usr/local/boost_1_59_0
 
-LIBS += -L/usr/local/lib -lopencv_shape -lopencv_stitching \
+LIBS += -L/usr/local/lib -lpthread \
+        -L/usr/local/lib -lX11 \
+        -L/usr/local/lib -lopencv_shape -lopencv_stitching \
         -lopencv_objdetect -lopencv_superres -lopencv_videostab \
         -lopencv_calib3d -lopencv_features2d -lopencv_highgui \
         -lopencv_videoio -lopencv_imgcodecs -lopencv_video \
         -lopencv_photo -lopencv_ml -lopencv_imgproc -lopencv_flann \
         -lopencv_core -lopencv_hal \
-        -L/usr/local/boost_1_59_0/lib -lboost_system
+        -L/usr/local/boost_1_59_0/lib -lboost_system \
 
 SOURCES += \
     dispatcher.cc \
@@ -25,7 +28,9 @@ SOURCES += \
     redisclient/impl/redisvalue.cpp \
     gdatatype.cc \
     videostreamhandler.cc \
-    persistor.cc
+    persistor.cc \
+    sugar/sugar.cc \
+    gdebug.cpp
 
 HEADERS += \
     sugar.h \
@@ -42,4 +47,5 @@ HEADERS += \
     redisclient/impl/redisclientimpl.h \
     gdatatype.h \
     videostreamhandler.h \
-    persistor.h
+    persistor.h \
+    gdebug.h
