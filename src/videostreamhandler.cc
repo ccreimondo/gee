@@ -50,6 +50,8 @@ void VideoStreamHandler(const string &sdp_addr, const string &cam_id)
     VideoTime video_time;
     Mat curr_frame;
 
+    // init handler
+    Extractor extractor;
 
     while (1) {
         if (!cap.read(curr_frame)) {
@@ -84,10 +86,12 @@ void VideoStreamHandler(const string &sdp_addr, const string &cam_id)
         }
 
         // cache video stream
+        VideoCacher(cam_id,
+                    video_id,
+                    video_time,
+                    video_stream_meta,
+                    curr_frame);
 
-
-        // init extractor
-        Extractor extractor;
         extractor.handler(curr_frame, cam_id, video_id, frame_counter);
 
         VideoForwarder(cam_id,
@@ -120,7 +124,7 @@ void VideoForwarder(const string &cam_id,
                     const VideoStreamMeta video_stream_meta,
                     const Mat &frame)
 {
-
+    imshow("Video live", frame);
 }
 
 void VideoCacher(const string &cam_id,

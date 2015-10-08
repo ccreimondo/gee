@@ -33,12 +33,6 @@ void Extractor::handler(const Mat &frame, string cam_id,
     if (HistDiff(frame_refer_, frame)) {
         // found human and get bound in rectangle
         vector<Rect> found_rects(HumanDetect(frame));
-        // TODO (@Zhiqiang He): cut
-        // Mat frame_clone(frame.clone());
-        // for (int i = 0; i < found_rects.size(); i++) {
-        //     rectangle(frame_clone, found_rects[i], Scalar(0, 255, 255), 2);
-        // }
-        // imshow("Extractor Debug", frame_clone);
 
 		for (int i = 0; i < found_rects.size(); i++) {
 			

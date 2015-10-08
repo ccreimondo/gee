@@ -17,6 +17,14 @@
 
 using std::string;
 
+class VideoCacher {
+public:
+    VideoCacher();
+    ~VideoCacher();
+
+private:
+};
+
 // entity
 //
 void VideoStreamHandler(const string &sdp_addr, const string &cam_id);

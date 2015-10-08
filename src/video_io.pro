@@ -29,7 +29,8 @@ SOURCES += \
     gdatatype.cc \
     videostreamhandler.cc \
     sugar/sugar.cc \
-    gdebug.cpp
+    gdebug.cpp \
+    GetFeature.cpp
 
 HEADERS += \
     sugar.h \
@@ -46,4 +47,8 @@ HEADERS += \
     redisclient/impl/redisclientimpl.h \
     gdatatype.h \
     videostreamhandler.h \
-    gdebug.h
+    gdebug.h \
+    GetFeature.h
+
+OTHER_FILES += \
+    PCA.xml
