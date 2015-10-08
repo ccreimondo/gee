@@ -9,7 +9,7 @@
 //100 - dimensional feature vector to remove the redundancy of the 
 //high - dimensional feature space.
 //
-
+#pragma once
 #ifndef GETFEATURE_H
 #define GETFEATURE_H
 
@@ -39,7 +39,7 @@ private:
 
 public:
 	GetFeature();
-	~GetFeature();
+	~GetFeature(){}
 
 	//extract feature vector of person image
 	Mat getFeature(const Mat img)const;

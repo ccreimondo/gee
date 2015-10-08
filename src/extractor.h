@@ -9,14 +9,19 @@
 //
 // Input: VideoCapture, current frame
 //
-
+#pragma once
 #ifndef EXTRACTOR_H
 #define EXTRACTOR_H
 
 #include <vector>
+#include <string>
 #include <opencv2/opencv.hpp>
 
-using std::vector;
+#include "GetFeature.h"
+#include "gdatatype.h"
+
+
+using namespace std;
 using namespace cv;
 
 class Extractor {
@@ -28,11 +33,17 @@ public:
     bool is_init() { return is_init_; }
 
     // new frame filter
-    void handler(const Mat &frame);
+    void handler(const Mat &frame,string cam_id_,string video_id_, size_t frame_pos_);
+
+private:
+	// id (char[27]): cam_id + video_id + frame_pos + sequence
+	string get_id(const string cam_id, const string video_id, const size_t frame_pos, int sequence);
+
 
 private:
     Mat frame_refer_;  // frame reference
     bool is_init_;  // default false
+	GetFeature get_feature_;	//using to get feature and pca
 };
 
 // Judge keyframe by diff frame.

@@ -1,9 +1,4 @@
 #include "gdatatype.h"
-#include <string>
-#include <vector>
-
-using std::string;
-using std::vector;
 
 PersonShot::PersonShot(string id, string cam_id, string video_id,
                        size_t frame_pos, vector<int> rect,
@@ -20,4 +15,10 @@ PersonShot::PersonShot(string id, string cam_id, string video_id,
 FloatArray PersonShot::mat_to_array()
 {
     // TODO (@Xinqian Gu): Convert Mat to array (stored in vector<float>).
+	FloatArray f;
+	f.dimension = proper_vector_.cols;
+	for (int i = 0; i < proper_vector_.cols; ++i) {
+		f.matrix.push_back(proper_vector_.at<float>(i, 0));
+	}
+	return f;
 }
