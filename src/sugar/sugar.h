@@ -20,6 +20,10 @@ string NumberToString(T Number)
 //
 string GetTimeNow(const string fmt="%d-%m-%Y %I:%M:%S");
 
+// ip to hex string
+//
+string IP2HexStr(const string &ip);
+
 // log handler
 //
 inline void LogInfo(const char *info_name, const char *info)

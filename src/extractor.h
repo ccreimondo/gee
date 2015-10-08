@@ -16,7 +16,7 @@
 #include <string>
 #include <opencv2/opencv.hpp>
 
-#include "GetFeature.h"
+#include "getfeature.h"
 #include "gdatatype.h"
 
 using namespace std;

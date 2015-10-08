@@ -17,25 +17,43 @@
 
 using std::string;
 
+// Do memory cache:
+//  Video is saved to disk and its meta is
+//  saved to redis.
+//
 class VideoCacher {
 public:
     VideoCacher();
-    ~VideoCacher();
+    ~VideoCacher() {}
+
+    void init(const string &cam_id,
+              const string &video_id,
+              VideoTime video_time,
+              VideoStreamMeta video_stream_meta);
+    bool is_init() { return is_init_; }
+
+    void handler(const string &cam_id,
+                 const string &video_id,
+                 const VideoTime video_time,
+                 const VideoStreamMeta video_stream_meta,
+                 const cv::Mat &frame);
+    // reset the instance
+    void release();
 
 private:
+    string cam_id_, video_id_;
+    VideoTime video_time_;
+    VideoStreamMeta video_stream_meta_;
+    bool is_init_;  // default false
+
+    string path;    // default /tmp/gee/video/
+    // create a VideoWriter instance
+    cv::VideoWriter writer;
 };
 
 // entity
 //
 void VideoStreamHandler(const string &sdp_addr, const string &cam_id);
-
-// cacher
-//
-void VideoCacher(const string &cam_id,
-                 const string &video_id,
-                 const VideoTime video_time,
-                 const VideoStreamMeta video_stream_meta,
-                 const cv::Mat &frame);
 
 // forward video stream to front-end
 //

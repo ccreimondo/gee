@@ -52,6 +52,7 @@ void VideoStreamHandler(const string &sdp_addr, const string &cam_id)
 
     // init handler
     Extractor extractor;
+    VideoCacher videocacher;
 
     while (1) {
         if (!cap.read(curr_frame)) {
@@ -85,19 +86,15 @@ void VideoStreamHandler(const string &sdp_addr, const string &cam_id)
             frame_counter = 0;
         }
 
+        // asynchronous thread
         // cache video stream
-        VideoCacher(cam_id,
-                    video_id,
-                    video_time,
-                    video_stream_meta,
-                    curr_frame);
-
+        videocacher.handler(cam_id, video_id,
+                            video_time, video_stream_meta,
+                            curr_frame);
         extractor.handler(curr_frame, cam_id, video_id, frame_counter);
 
-        VideoForwarder(cam_id,
-                       video_id,
-                       video_time,
-                       video_stream_meta,
+        VideoForwarder(cam_id, video_id,
+                       video_time, video_stream_meta,
                        curr_frame);
 
         waitKey(1);
@@ -124,14 +121,72 @@ void VideoForwarder(const string &cam_id,
                     const VideoStreamMeta video_stream_meta,
                     const Mat &frame)
 {
-    imshow("Video live", frame);
+    //cout << "This is video forwarder" << endl;
 }
 
-void VideoCacher(const string &cam_id,
-                 const string &video_id,
-                 const VideoTime video_time,
-                 const VideoStreamMeta video_stream_meta,
-                 const Mat &frame)
+VideoCacher::VideoCacher()
 {
-    cout << "This is video cacher" << endl;
+    is_init_ = false;
+    path = "/tmp/gee/video/";
+}
+
+void VideoCacher::init(const string &cam_id,
+                       const string &video_id,
+                       VideoTime video_time,
+                       VideoStreamMeta video_stream_meta)
+{
+    // create video meta
+    cam_id_ = cam_id;
+    video_id_ = video_id;
+    video_time_.time_start = video_time.time_start;
+    video_stream_meta_ = video_stream_meta;
+
+    // open a file to write video stream
+    char filename[kBufferSize];
+    sprintf(filename, "%s%s%s.%s",
+            path.c_str(), IP2HexStr(cam_id).c_str(), video_id.c_str(), "H264");
+    cout << filename << endl;
+    Size v_size(video_stream_meta_.solution[0],
+                video_stream_meta_.solution[1]);
+    writer.open(filename, CV_FOURCC('X', '2', '6', '4'),
+                video_stream_meta_.fps, v_size);
+    if (!writer.isOpened()) {
+        LogError("Fail to open /srv/gee/video.");
+        exit(1);
+    }
+
+    // update init stat
+    is_init_ = true;
+}
+
+void VideoCacher::handler(const string &cam_id,
+                          const string &video_id,
+                          const VideoTime video_time,
+                          const VideoStreamMeta video_stream_meta,
+                          const Mat &frame)
+{
+    // auto init when created
+    if (!is_init()) {
+        init(cam_id, video_id, video_time, video_stream_meta);
+    }
+
+    // new video piece come
+    if (cam_id != cam_id_) {
+        video_time_.time_end = video_time.time_end;
+        // TODO (@Zhiqiang He): save meta to redis
+
+        // finish handling last video piece and release resource
+        release();
+        init(cam_id, video_id, video_time, video_stream_meta);
+    } else {
+        // continue to write video to disk
+        cout << "Write a frame" << endl;
+        writer << frame;
+    }
+}
+
+void VideoCacher::release()
+{
+    is_init_ = false;
+    writer.release();
 }

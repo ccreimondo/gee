@@ -1,4 +1,4 @@
-#include "GetFeature.h"
+#include "getfeature.h"
 
 GetFeature::GetFeature() {
 	//≥ı ºªØpca

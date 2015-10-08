@@ -30,7 +30,7 @@ SOURCES += \
     videostreamhandler.cc \
     sugar/sugar.cc \
     gdebug.cpp \
-    GetFeature.cpp
+    getfeature.cpp
 
 HEADERS += \
     sugar.h \
@@ -48,7 +48,7 @@ HEADERS += \
     gdatatype.h \
     videostreamhandler.h \
     gdebug.h \
-    GetFeature.h
+    getfeature.h
 
 OTHER_FILES += \
     PCA.xml
