@@ -1,4 +1,7 @@
+#include <sstream>
 #include "extractor.h"
+
+using std::stringstream;
 
 Extractor::Extractor()
 {
@@ -19,7 +22,8 @@ void Extractor::set_frame_refer(const Mat &frame)
     is_init_ = true;
 }
 
-void Extractor::handler(const Mat &frame, string cam_id, string video_id, size_t frame_pos)
+void Extractor::handler(const Mat &frame, string cam_id,
+                        string video_id, size_t frame_pos)
 {
     // set frame reference
     if (!is_init_) {
@@ -30,12 +34,11 @@ void Extractor::handler(const Mat &frame, string cam_id, string video_id, size_t
         // found human and get bound in rectangle
         vector<Rect> found_rects(HumanDetect(frame));
         // TODO (@Zhiqiang He): cut
-        // $start debug
-     /*   Mat frame_clone(frame.clone());
-        for (int i = 0; i < found_rects.size(); i++) {
-            rectangle(frame_clone, found_rects[i], Scalar(0, 255, 255), 2);
-        }
-        imshow("Extractor Debug", frame_clone);*/
+        // Mat frame_clone(frame.clone());
+        // for (int i = 0; i < found_rects.size(); i++) {
+        //     rectangle(frame_clone, found_rects[i], Scalar(0, 255, 255), 2);
+        // }
+        // imshow("Extractor Debug", frame_clone);
 
 		for (int i = 0; i < found_rects.size(); i++) {
 			
@@ -61,20 +64,18 @@ void Extractor::handler(const Mat &frame, string cam_id, string video_id, size_t
 
 			PersonShot person_shot_(id, cam_id, video_id, frame_pos, rect, person_feature);
 
-			//save
 			// TODO:save personshot
-
-
 		}
-        // $end debug
 
         // update frame refer
         set_frame_refer(frame);
     }
 }
-//form id
+
+// Form id.
 //
-string Extractor::get_id(const string cam_id, const string video_id, const size_t frame_pos, int sequence) {
+string Extractor::get_id(const string cam_id, const string video_id,
+                         const size_t frame_pos, int sequence) {
 	stringstream ss, sss;
 	string str_frame_pos, str_sequence;
 	ss << frame_pos;
@@ -96,6 +97,7 @@ string Extractor::get_id(const string cam_id, const string video_id, const size_
 	if (str_sequence.size() == 1) {
 		str_sequence = "0" + str_sequence;
 	}
+
 	return cam_id + video_id + str_frame_pos + str_sequence;
 }
 

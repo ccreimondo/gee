@@ -1,10 +1,8 @@
-#pragma once
 #ifndef GDATATYPE_H
 #define GDATATYPE_H
 
 #include <string>
 #include <vector>
-#include <sstream>
 
 #include <opencv2/opencv.hpp>
 

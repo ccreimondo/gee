@@ -9,7 +9,6 @@
 //
 // Input: VideoCapture, current frame
 //
-#pragma once
 #ifndef EXTRACTOR_H
 #define EXTRACTOR_H
 
@@ -19,7 +18,6 @@
 
 #include "GetFeature.h"
 #include "gdatatype.h"
-
 
 using namespace std;
 using namespace cv;
@@ -33,12 +31,15 @@ public:
     bool is_init() { return is_init_; }
 
     // new frame filter
-    void handler(const Mat &frame,string cam_id_,string video_id_, size_t frame_pos_);
+    void handler(const Mat &frame, string cam_id,
+                 string video_id, size_t frame_pos);
 
 private:
 	// id (char[27]): cam_id + video_id + frame_pos + sequence
-	string get_id(const string cam_id, const string video_id, const size_t frame_pos, int sequence);
-
+    string get_id(const string cam_id,
+                  const string video_id,
+                  const size_t frame_pos,
+                  int sequence);
 
 private:
     Mat frame_refer_;  // frame reference

@@ -28,7 +28,6 @@ SOURCES += \
     redisclient/impl/redisvalue.cpp \
     gdatatype.cc \
     videostreamhandler.cc \
-    persistor.cc \
     sugar/sugar.cc \
     gdebug.cpp
 
@@ -47,5 +46,4 @@ HEADERS += \
     redisclient/impl/redisclientimpl.h \
     gdatatype.h \
     videostreamhandler.h \
-    persistor.h \
     gdebug.h

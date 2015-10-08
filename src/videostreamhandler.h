@@ -21,20 +21,20 @@ using std::string;
 //
 void VideoStreamHandler(const string &sdp_addr, const string &cam_id);
 
-// video forward to front-end
+// cacher
+//
+void VideoCacher(const string &cam_id,
+                 const string &video_id,
+                 const VideoTime video_time,
+                 const VideoStreamMeta video_stream_meta,
+                 const cv::Mat &frame);
+
+// forward video stream to front-end
 //
 void VideoForwarder(const string &cam_id,
                     const string &video_id,
                     const VideoTime video_time,
                     const VideoStreamMeta video_stream_meta,
                     const cv::Mat &frame);
-
-// streamer
-//
-void VideoStreamer();
-
-// cacher
-//
-void VideoCacher();
 
 #endif // VIDEOSTREAMHANDLER_H

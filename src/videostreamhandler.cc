@@ -45,7 +45,7 @@ void VideoStreamHandler(const string &sdp_addr, const string &cam_id)
     double timestamp_after = cap.get(CV_CAP_PROP_POS_MSEC);
 
     // init counter and prepare some vars
-    size_t counter = 0;
+    size_t frame_counter = 0;
     string video_id;
     VideoTime video_time;
     Mat curr_frame;
@@ -57,6 +57,9 @@ void VideoStreamHandler(const string &sdp_addr, const string &cam_id)
             LogError("Exiting");
             exit(1);
         }
+
+        // set frame counter
+        frame_counter++;
 
         // init some vars for the first frame
         if (cap.get(CV_CAP_PROP_POS_FRAMES) <= 1) {
@@ -76,7 +79,16 @@ void VideoStreamHandler(const string &sdp_addr, const string &cam_id)
 
             // update timestamp before
             timestamp_before = cap.get(CV_CAP_PROP_POS_MSEC);
+            // reset frame counter
+            frame_counter = 0;
         }
+
+        // cache video stream
+
+
+        // init extractor
+        Extractor extractor;
+        extractor.handler(curr_frame, cam_id, video_id, frame_counter);
 
         VideoForwarder(cam_id,
                        video_id,
@@ -108,25 +120,14 @@ void VideoForwarder(const string &cam_id,
                     const VideoStreamMeta video_stream_meta,
                     const Mat &frame)
 {
-    // Just for debug
-    imshow("Frame", frame);
-    // forward video stream to front-end via streamer
-    //
-    VideoStreamer();
 
-    // forward video stream to cacher
-    VideoCacher();
-
-    // forward video stream to extractor
-    // TODO (@Xinqian Gu): include extractor
 }
 
-void VideoCacher()
-{
-    cout << "This is video streamer" << endl;
-}
-
-void VideoStreamer()
+void VideoCacher(const string &cam_id,
+                 const string &video_id,
+                 const VideoTime video_time,
+                 const VideoStreamMeta video_stream_meta,
+                 const Mat &frame)
 {
     cout << "This is video cacher" << endl;
 }
