@@ -39,8 +39,11 @@ void Extractor::handler(const Mat &frame, string cam_id,
 			Mat person_image;
 			frame(found_rects[i]).copyTo(person_image);
 
+			//resize image
+			resize(person_image, person_image, Size(48, 128),0,0, INTER_AREA);
 			imshow("Extractor Debug", person_image);
 			//get feature of each person image
+
 			Mat person_feature=get_feature_.getFeature(person_image);
 
 			//get personshot
@@ -183,6 +186,12 @@ vector<Rect> HumanDetect(const Mat &frame)
         if (j == found_rects.size())
             found_rects_filtered.push_back(r);
     }
-
+	for (int i = 0; i<found_rects_filtered.size(); i++)
+	{
+		found_rects_filtered[i].x += cvRound(found_rects_filtered[i].width*0.2);
+		found_rects_filtered[i].width = cvRound(found_rects_filtered[i].width*0.6);
+		found_rects_filtered[i].y += cvRound(found_rects_filtered[i].height*0.07);
+		found_rects_filtered[i].height = cvRound(found_rects_filtered[i].height*0.8);
+	}
     return found_rects_filtered;
 }
