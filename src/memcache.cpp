@@ -1,4 +1,3 @@
-#include <iostream>
 #include <string>
 #include <list>
 #include <boost/asio/ip/address.hpp>
@@ -11,8 +10,6 @@
 using std::string;
 using std::list;
 using std::to_string;
-using std::cout;
-using std::endl;
 
 MemCache::MemCache(boost::asio::io_service &io_service)
       : redis_sync_(io_service)
