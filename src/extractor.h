@@ -18,7 +18,7 @@
 #include <boost/asio.hpp>
 
 #include "redisclient/redissyncclient.h"
-#include "getfeature.h"
+#include "RBML/getfeature.h"
 #include "gdatatype.h"
 #include "memcache.h"
 
