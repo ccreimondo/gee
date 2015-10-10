@@ -3,13 +3,12 @@
 #include <opencv2/opencv.hpp>
 #include "videostreamhandler.h"
 #include "extractor.h"
+#include "videocacher.h"
 #include "sugar/sugar.h"
 #include "gdebug.h"
 
 using namespace cv;
 using std::string;
-
-const int kBufferSize = 100;
 
 string GetVideoID();
 string GetSysTimeNow();
@@ -93,14 +92,18 @@ void VideoStreamHandler(const string &sdp_addr, const string &cam_id)
         //
         // cache video stream
         videocacher.handler(cam_id, video_id,
-                            video_time, video_stream_meta,
+                            video_time,
+                            video_stream_meta,
+                            frame_counter,
                             curr_frame);
-        extractor.handler(curr_frame, cam_id, video_id,
+        extractor.handler(curr_frame,
+                          cam_id, video_id,
                           frame_counter);
 
         // TODO (@Zhiqiang He): find a solution
         VideoForwarder(cam_id, video_id,
-                       video_time, video_stream_meta,
+                       video_time,
+                       video_stream_meta,
                        curr_frame);
 
         waitKey(1);
@@ -128,89 +131,4 @@ void VideoForwarder(const string &cam_id,
                     const Mat &frame)
 {
     // cout << "This is video forwarder" << endl;
-}
-
-VideoCacher::VideoCacher()
-{
-    is_init_ = false;
-    path_ = "/tmp/gee/video/";
-    filename_ = "";
-    frames_counter_ = 0;
-}
-
-void VideoCacher::init(const string &cam_id,
-                       const string &video_id,
-                       VideoTime video_time,
-                       VideoStreamMeta video_stream_meta)
-{
-    // create video meta
-    cam_id_ = cam_id;
-    video_id_ = video_id;
-    video_time_.time_start = video_time.time_start;
-    video_stream_meta_ = video_stream_meta;
-
-    // open a file to write video stream
-    filename_ = path_ + IP2HexStr(cam_id) + video_id + ".H264";
-    Size v_size(video_stream_meta_.solution[0],
-                video_stream_meta_.solution[1]);
-    writer_.open(filename_, CV_FOURCC('X', '2', '6', '4'),
-                video_stream_meta_.fps, v_size);
-    if (!writer_.isOpened()) {
-        LogError("Fail to open /tmp/gee/video.");
-        exit(1);
-    }
-
-    // update init stat
-    is_init_ = true;
-}
-
-void VideoCacher::handler(const string &cam_id,
-                          const string &video_id,
-                          const VideoTime video_time,
-                          const VideoStreamMeta video_stream_meta,
-                          const Mat &frame)
-{
-    // TODO (@Zhiqiang He): design again
-    // it's said that this design is benefit for concurrency
-    //
-    // create the first video piece
-    if (!is_init()) {
-        init(cam_id, video_id, video_time, video_stream_meta);
-        frames_counter_++;
-    }
-
-    video_time_.time_end = video_time.time_end;
-
-    // new video piece come
-    if (cam_id != cam_id_) {
-        // finish handling last video piece and release resource
-        release();
-        // create a new video piece
-        init(cam_id, video_id, video_time, video_stream_meta);
-        frames_counter_++;
-    } else {
-        // continue to write video to disk
-        writer_ << frame;
-        frames_counter_++;
-    }
-}
-
-void VideoCacher::release()
-{
-    if (is_init_) {
-        // save video
-        VideoShot video_shot(video_id_, cam_id_,
-                             video_stream_meta_.fps,
-                             frames_counter_, "H264",
-                             video_time_.time_start,
-                             video_time_.time_end,
-                             path_, filename_);
-        memcache_.save(video_shot);
-
-        // relase resouce
-        filename_.clear();
-        writer_.release();
-
-        is_init_ = false;
-    }
 }
