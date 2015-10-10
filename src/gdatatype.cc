@@ -1,8 +1,9 @@
+#include <string>
+
+#include <opencv2/opencv.hpp>
 #include "gdatatype.h"
 
-#include <iostream>
-using std::cout;
-using std::endl;
+using std::string;
 
 PersonShot::PersonShot(string id, string cam_id, string video_id,
                        size_t frame_pos, vector<int> rect,
@@ -18,7 +19,6 @@ PersonShot::PersonShot(string id, string cam_id, string video_id,
 
 FloatArray PersonShot::mat_to_array()
 {
-    // TODO (@Xinqian Gu): Convert Mat to array (stored in vector<float>).
 	FloatArray f;
     f.dimension = proper_vector_.rows;
     for (int i = 0; i < proper_vector_.rows; ++i) {
@@ -26,4 +26,24 @@ FloatArray PersonShot::mat_to_array()
     }
 
 	return f;
+}
+
+VideoShot::VideoShot(const string &video_id, const string &cam_id,
+                     const size_t fps, const size_t frames, const string &codec,
+                     const string &start_time, const string &end_time,
+                     const string &path, const string &filename)
+{
+    cam_id_ = cam_id;
+
+    // video meta
+    video_id_ = video_id;
+    fps_ = fps;
+    frames_ = frames;
+    codec_ = codec;
+
+    // video extra meta
+    start_time_ = start_time;
+    end_time_ = end_time;
+    filename_ = filename;
+    path_ = path;
 }

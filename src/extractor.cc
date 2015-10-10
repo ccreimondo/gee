@@ -1,11 +1,13 @@
 #include <sstream>
+
 #include "extractor.h"
 #include "memcache.h"
+#include "sugar/sugar.h"
+#include "gdebug.h"
 
 using std::stringstream;
 
 Extractor::Extractor()
-    : memcache_(io_service_)
 {
     is_init_ = false;
 }
@@ -41,14 +43,16 @@ void Extractor::handler(const Mat &frame, string cam_id,
 			Mat person_image;
 			frame(found_rects[i]).copyTo(person_image);
 
-			//resize image
+            // resize image
 			resize(person_image, person_image, Size(48, 128),0,0, INTER_AREA);
+#ifndef NOGDEBUG
 			imshow("Extractor Debug", person_image);
-			//get feature of each person image
+#endif
+            // get feature of each person image
 
 			Mat person_feature=get_feature_.getFeature(person_image);
 
-			//get personshot
+            // get personshot
 			string id = get_id(cam_id, video_id, frame_pos, i);
 
 			vector<int> rect;
@@ -57,13 +61,9 @@ void Extractor::handler(const Mat &frame, string cam_id,
 			rect.push_back(found_rects[i].x + found_rects[i].width);
 			rect.push_back(found_rects[i].y + found_rects[i].height);
 
-            // cout << id << endl;
-            // cout << rect[0] << " " << rect[1] << " " << rect[2] << " " << rect[3] << endl;
-            // cout << person_feature << endl;
-
             PersonShot person_shot(id, cam_id, video_id,
                                    frame_pos, rect, person_feature);
-            // MemCache memcache_(io_service_);
+
             memcache_.save(person_shot);
 		}
 
@@ -98,7 +98,7 @@ string Extractor::get_id(const string cam_id, const string video_id,
 		str_sequence = "0" + str_sequence;
 	}
 
-	return cam_id + video_id + str_frame_pos + str_sequence;
+    return IP2HexStr(cam_id) + video_id + str_frame_pos + str_sequence;
 }
 
 // Judge keyframe by diff frame.

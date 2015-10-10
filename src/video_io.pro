@@ -9,7 +9,6 @@ INCLUDEPATH += /usr/loca/opencv \
         /usr/local/boost_1_59_0
 
 LIBS += -L/usr/local/lib -lpthread \
-        -L/usr/local/lib -lX11 \
         -L/usr/local/lib -lopencv_shape -lopencv_stitching \
         -lopencv_objdetect -lopencv_superres -lopencv_videostab \
         -lopencv_calib3d -lopencv_features2d -lopencv_highgui \

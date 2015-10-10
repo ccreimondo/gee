@@ -1,9 +1,10 @@
 #ifndef GDEBUG_H
 #define GDEBUG_H
 
+#define NOGDEBUG
+
 #ifndef NOGDEBUG
 
-#include <X11/Xlib.h>
 #include <thread>
 #include <iostream>
 

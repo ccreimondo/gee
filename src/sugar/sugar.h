@@ -18,7 +18,7 @@ string NumberToString(T Number)
 
 // get time now
 //
-string GetTimeNow(const string fmt="%d-%m-%Y %I:%M:%S");
+string GetTimeNow(const string fmt="%Y-%m-%d %I:%M:%S");
 
 // ip to hex string
 //

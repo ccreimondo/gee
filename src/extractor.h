@@ -49,8 +49,7 @@ private:
     bool is_init_;  // default false
 	GetFeature get_feature_;	//using to get feature and pca
 
-    // to do memncache
-    boost::asio::io_service io_service_;
+    // to do memcache
     MemCache memcache_;
 };
 

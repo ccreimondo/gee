@@ -7,12 +7,16 @@
 #include "memcache.h"
 #include "sugar/sugar.h"
 
+#include <iostream>
+using std::cout;
+using std::endl;
+
 using std::string;
 using std::list;
 using std::to_string;
 
-MemCache::MemCache(boost::asio::io_service &io_service)
-      : redis_sync_(io_service)
+MemCache::MemCache()
+      : redis_sync_(io_service_)
 {
     server_ip_ = "127.0.0.1";
     port_ = 6379;
@@ -63,9 +67,32 @@ bool MemCache::save(PersonShot person_shot)
         LogError(res.toString().c_str());
         exit(1);
     }
+
+    return true;
 }
 
-// bool MemCache::save(VideoShot video_shot)
-// {
-//
-// }
+bool MemCache::save(VideoShot video_shot)
+{
+    RedisValue res;
+
+    list<string> args = {
+        video_shot.get_id(),
+        "cam_id", video_shot.get_cam_id(),
+        "codec", video_shot.get_codec(),
+        "fps", to_string(video_shot.get_fps()),
+        "frames", to_string(video_shot.get_frames()),
+        "start_time", video_shot.get_start_time(),
+        "end_time", video_shot.get_end_time(),
+        "path", video_shot.get_path(),
+        "filename", video_shot.get_filename()
+    };
+
+    // save PersonShot in redis hash
+    res = redis_sync_.command("HMSET", args);
+    if (res.isError()) {
+        LogError(res.toString().c_str());
+        exit(1);
+    }
+
+    return true;
+}

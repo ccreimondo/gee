@@ -2,7 +2,6 @@
 #define MEMCACHE_H
 
 #include <string>
-
 #include <boost/asio.hpp>
 
 #include "redisclient/redissyncclient.h"
@@ -26,13 +25,13 @@ using std::string;
 class MemCache
 {
 public:
-    MemCache(boost::asio::io_service &io_service);
+    MemCache();
     ~MemCache() {}
 
     // save
     //
     bool save(PersonShot person_shot);
-    // bool save(VideoShot video_shot);
+    bool save(VideoShot video_shot);
 
     // callback
     //
@@ -46,6 +45,9 @@ private:
     // ip
     boost::asio::ip::address ip_;
 
+    // boost io_service
+    boost::asio::io_service io_service_;
+
     // names of channes which are used to push commands
     string vs_cmd_ch_name_, ps_cmd_ch_name_;  // default cmd.vs, cmd.ps
     // channel clients
@@ -53,9 +55,6 @@ private:
 
     // synchronous redis client
     RedisSyncClient redis_sync_;
-
-    // boost io_service
-    boost::asio::io_service io_service_;
 };
 
 #endif // MEMCACHE_H

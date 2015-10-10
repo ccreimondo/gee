@@ -5,6 +5,7 @@
 #include <vector>
 
 #include <opencv2/opencv.hpp>
+#include "sugar/sugar.h"
 
 using std::string;
 using std::vector;
@@ -57,18 +58,35 @@ struct VideoStreamMeta {
     int solution[2];    // we prefer 1280x720
 };
 
-// TODO (@Zhiqiang He): ~
 struct VideoTime {
-    string time_start, time_end;    // we prefer 10min per piece
+    string time_start, time_end;    // 10min per piece
+                                    // time format: %Y%m%d%I%M%S
 };
 
 class VideoShot {
 public:
-    VideoShot() {}
-
+    VideoShot(const string &video_id, const string &cam_id,
+              const size_t fps, const size_t frames, const string &codec,
+              const string &start_time, const string &end_time,
+              const string &path, const string &filename);
     ~VideoShot() {}
 
+    string get_id() { return IP2HexStr(cam_id_) + video_id_; }
+    string get_cam_id() { return cam_id_; }
+    string get_codec() { return codec_; }
+    size_t get_fps() { return fps_; }
+    size_t get_frames() { return frames_; }
+    string get_start_time() { return start_time_; }
+    string get_end_time() { return end_time_; }
+    string get_path() { return path_; }
+    string get_filename() { return filename_; }
+
 private:
+    string cam_id_, video_id_;
+    string codec_;
+    size_t fps_, frames_;
+    string start_time_, end_time_;
+    string path_, filename_;
 };
 
 #endif // GDATATYPE_H

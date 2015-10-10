@@ -2,7 +2,9 @@
 #include <string>
 #include <sstream>
 #include <boost/algorithm/string.hpp>
+
 #include "sugar.h"
+#include "gdebug.h"
 
 using std::string;
 using std::vector;
@@ -34,7 +36,7 @@ string IP2HexStr(const string &ip)
     for (int i = 0; i < strs.size(); ++i) {
         int ip_sub_i = std::stoi(strs[i], nullptr, 10);
         stringstream ss;
-        ss << std::hex << i;
+        ss << std::hex << ip_sub_i;
         ip_hex_str += ss.str();
     }
 
