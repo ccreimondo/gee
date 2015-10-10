@@ -1,68 +1,209 @@
-﻿<!DOCTYPE html>
 <html>
-<head>
-    <title></title>
-	<meta charset="utf-8" />
-    <link rel="stylesheet" href="./css/public.css" />
-    <script src="./js/jquery-2.1.4.min.js"></script>
-    <!--<script src="./js/jscroll2.js"></script>-->
-    
-</head>
-<body>
-    <div class="main">
-        <div class="target_container">
-            <div class="target_window">
-                <div class="target_list">
-                    <img src="./imgs/target_1.bmp" alt="" class="target_item">
-                    <img src="./imgs/target_1.bmp" alt="" class="target_item">
-                    <img src="./imgs/target_1.bmp" alt="" class="target_item">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="./css/style.css">
+        <link rel="stylesheet" href="./css/swiper.min.css">
+        
+        <script src="./js/jquery-2.1.4.min.js"></script>
+        <script src="./js/jquery.color.js"></script>
+    </head>
+    <body>
+        <div class="choose_target">
+            <div class="left_turn"></div>
+            <div class="right_turn"></div>
+            <div id="stage">
+                <ul id="container" >                  
+                    <li class="one 1"><img src="./imgs/target_1.bmp" alt=""></li>
+                    <li class="one 2"><img src="./imgs/target_2.bmp" alt=""></li>
+                    <li class="one 3"><img src="./imgs/target_3.bmp" alt=""></li>
+                    <li class="one 4"><img src="./imgs/target_4.bmp" alt=""></li>
+                    <li class="one 5"><img src="./imgs/target_5.bmp" alt=""></li>
+                </ul>  
+            </div>
+        </div>  
+        
+        <div class="head">
+            <img src="" alt="" class="log">
+        </div>
+        <div class="nav">
+            <ul class="function_swich">
+                <li class="monitor_nav realtime_fun active"></li>
+                <li class="monitor_nav history_fun"></li>
+            </ul>
+        </div>
+        
+        <div class="main_container">
+            
+            <div class="realtime_monitor">
+                <div class="mulmonitor_container">
+                    <div class="onemonitor" >
+                        <video src="C:\Users\boby\Desktop\video\WP_20151002_10_06_55_Pro.mp4" class="html5_realmonitor"></video>
+                        <div class="real_tooltip">
+                            <div class="controllor monitorid">ID: 001</div>
+                            <div class="controllor monitor_statu"></div>
+                            <div class="controllor monitor_capture">CAPTURE</div>
+                            <div class="controllor monitor_mixum"></div>
+                            <div class="controllor monitor_data">2015-10-09 0:25:00</div>
+                        </div>
+                    </div>
+                    <div class="onemonitor">
+                        <video src="C:\Users\boby\Desktop\video\WP_20151002_10_06_55_Pro.mp4" class="html5_realmonitor"></video>
+                        <div class="real_tooltip">
+                            <div class="controllor monitorid">ID: 001</div>
+                            <div class="controllor monitor_statu"></div>
+                            <div class="controllor monitor_capture">CAPTURE</div>
+                            <div class="controllor monitor_mixum"></div>
+                            <div class="controllor monitor_data">2015-10-09 0:25:00</div>
+                        </div>
+                    </div>
+                    <div class="onemonitor">
+                        <video src="C:\Users\boby\Desktop\video\WP_20151002_10_06_55_Pro.mp4" class="html5_realmonitor"></video>
+                        <div class="real_tooltip">
+                            <div class="controllor monitorid">ID: 001</div>
+                            <div class="controllor monitor_statu"></div>
+                            <div class="controllor monitor_capture">CAPTURE</div>
+                            <div class="controllor monitor_mixum"></div>
+                            <div class="controllor monitor_data">2015-10-09 0:25:00</div>
+                        </div>
+                    </div>
+                    <div class="onemonitor">
+                        <video src="C:\Users\boby\Desktop\video\WP_20151002_10_06_55_Pro.mp4" class="html5_realmonitor"></video>
+                        <div class="real_tooltip">
+                            <div class="controllor monitorid">ID: 001</div>
+                            <div class="controllor monitor_statu"></div>
+                            <div class="controllor monitor_capture">CAPTURE</div>
+                            <div class="controllor monitor_mixum"></div>
+                            <div class="controllor monitor_data">2015-10-09 0:25:00</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="video_container">
-            <!--<div class="target_photo"></div>-->
-            <div class="html5_video" >
-            <video id="myVideo" class="video" >
-                <source src="C:\Users\boby\Desktop\video\WP_20151002_10_06_55_Pro.mp4" type="video/ogg">
-                <!--<source src="/i/movie.mp4" type="video/mp4">-->
+            
+            <div class ="detail_page">
+                <div class="camera_container">
+                    <div class="camera_wrap">
+                        <video id="aa" src="C:\Users\boby\Desktop\video\WP_20151002_10_06_55_Pro.mp4" width="816px" height="460px" class="html5_video"></video>
+                        <div class="tooltip">
+                            <div class="controllor cameraid">ID: 001</div>
+                            <div class="controllor play_pause pause"></div>
+                            <div class="controllor stop"></div>
+                            <div class="controllor speedup"></div>
+                            <div class="controllor progress_bar">
+                                <span class="tol_process process"></span>
+                                <span class="curr_process process"></span>
+                                <span class="track_point"></span>
+                            </div>
+                            <div class="controllor maxum"></div>
+                            <div class="controllor time">05:33:02 / 12:00:00</div>                            
+                        </div>
+                    </div>
+                    
+                    <div class="tips">
+                        <canvas id="analyzing" width="327px" height="44px"></canvas>
+                        <div class="anly_block">
+                            <img src="./imgs/k_left.png" alt="" class="k_left">
+                            <span class="anly">ANALYZING</span>
+                            <img src="./imgs/k_right.png" alt="" class="k_right">
+                        </div>
+                    </div>
+                </div>
                 
-            </video>
-            <div class="tooltip">
-                <div class="processbar">
-                    <span class="tol_process process"></span>
-                    <span class="cur_process process"></span>
+                <div class="result_container">
+                    <div class="result_head"></div>
+                    <div class="choose_camera">
+                        <ul>
+                            <li class="one_camera one_camera_1"></li>
+                            <li class="one_camera one_camera_2"><div>002</div></li>
+                            <li class="one_camera one_camera_3"><div>003</div></li>
+                            <li class="one_camera one_camera_4"><div>004</div></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="result_window result_window_1 swiper-container">
+                        <div class="result_list swiper-wrapper">
+                            <div class="result_item swiper-slide">
+                                <img src="./imgs/result1.png" alt="" class="result_img">
+                                <div class="attach">
+                                    <span class="att"></span>
+                                    <span class="resutl_time"></span>
+                                </div>
+                            </div>
+                            <div class="result_item swiper-slide">
+                                <img src="./imgs/result2.png" alt="" class="result_img">
+                                
+                            </div>
+                            <div class="result_item swiper-slide">
+                                <img src="./imgs/result3.png" alt="" class="result_img">
+                            </div>
+                            <div class="result_item swiper-slide">
+                                <img src="./imgs/result4.png" alt="" class="result_img">
+                            </div>
+                        </div>
+                        <div class="swiper-scrollbar"></div>
+                    </div>
+                    
+                    <div class="result_window result_window_2 swiper-container">
+                        <div class="result_list swiper-wrapper">
+                            <div class="result_item swiper-slide">
+                                <img src="./imgs/result1.png" alt="" class="result_img">
+                                <div class="attach">
+                                    <span class="att"></span>
+                                    <span class="resutl_time"></span>
+                                </div>
+                            </div>
+                            <div class="result_item swiper-slide">
+                                <img src="./imgs/result2.png" alt="" class="result_img">
+                                
+                            </div>
+                            <div class="result_item swiper-slide">
+                                <img src="./imgs/result3.png" alt="" class="result_img">
+                            </div>
+                            <div class="result_item swiper-slide">
+                                <img src="./imgs/result4.png" alt="" class="result_img">
+                            </div>
+                        </div>
+                        <div class="swiper-scrollbar"></div>
+                    </div>
+                    
+                    <div class="result_window result_window_3 swiper-container">
+                        <div class="result_list swiper-wrapper">
+                            <div class="result_item swiper-slide">
+                                <img src="./imgs/result1.png" alt="" class="result_img">
+                                <div class="attach">
+                                    <span class="att"></span>
+                                    <span class="resutl_time"></span>
+                                </div>
+                            </div>
+                            <div class="result_item swiper-slide">
+                                <img src="./imgs/result2.png" alt="" class="result_img">
+                                
+                            </div>
+                            <div class="result_item swiper-slide">
+                                <img src="./imgs/result3.png" alt="" class="result_img">
+                            </div>
+                            <div class="result_item swiper-slide">
+                                <img src="./imgs/result4.png" alt="" class="result_img">
+                            </div>
+                        </div>
+                        <div class="swiper-scrollbar"></div>
+                    </div>
                 </div>
-                <button class="bt">播放</button>
-                <button class="rewind">快退</button>
-                <button class="forword">快进</button>
-                <button class="rate">加速</button>
-                <button class="screenshot">截屏</button>
-            </div> 
+                
+            </div>
         </div>
-        </div>
-        <div class="result_container">
-            <div class="choose_camera">
-                <ul>
-                    <li class="one_camera 0">摄像头1</li>
-                    <li class="one_camera 1">摄像头2</li>
-                    <li class="one_camera 2">摄像头3</li>
-                </ul>
-            </div>
-            <div class="result_window">
-                <div class="result_list">
-                </div>
-            </div>
-            <div class="result_window">
-                <div class="result_list">
-                </div>
-            </div>
-            <div class="result_window">
-                <div class="result_list">
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <script src="./js/public.js"></script>
-</body>
+        
+        <script src="./js/swiper.js"></script>
+        <script src="./js/public.js"></script>
+        
+        <script>
+            var swiper = new Swiper('.swiper-container', {
+                scrollbar: '.swiper-scrollbar',
+                scrollbarHide: true,
+                slidesPerView: 'auto',
+                centeredSlides: false,
+                // spaceBetween: 30,
+                grabCursor: true
+            });
+        </script>
+    </body>
 </html>
