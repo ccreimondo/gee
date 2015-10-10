@@ -1,2 +1,5 @@
 # For QT Creator
 *.pro.user
+
+# For Mac OS
+.DS_Store
