@@ -18,20 +18,20 @@ LIBS += -L/usr/local/lib -lpthread \
         -L/usr/local/boost_1_59_0/lib -lboost_system \
 
 SOURCES += \
-    dispatcher.cc \
-    extractor.cc \
     redisclient/impl/redisasyncclient.cpp \
     redisclient/impl/redisclientimpl.cpp \
     redisclient/impl/redisparser.cpp \
     redisclient/impl/redissyncclient.cpp \
     redisclient/impl/redisvalue.cpp \
-    gdatatype.cc \
-    videostreamhandler.cc \
-    sugar/sugar.cc \
     gdebug.cpp \
     getfeature.cpp \
     memcache.cpp \
-    videocacher.cc
+    sugar/sugar.cpp \
+    dispatcher.cpp \
+    extractor.cpp \
+    gdatatype.cpp \
+    videocacher.cpp \
+    videostreamhandler.cpp
 
 HEADERS += \
     sugar.h \
