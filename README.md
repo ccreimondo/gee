@@ -19,8 +19,6 @@ gee
 ```
 
 ###请求监控视频数据
-`"entrance": "/api/gee/records"`
-
 ####获取某天的监控视频列表
 
 `GET /api/gee/records/data:<date>`
@@ -30,7 +28,8 @@ Ex. `/api/gee/records/20151010`
 ```json
 {
     "id": "c0a831201510100910540055700",
-    "format": "H264",
+    "format": "ogg",
+    "codec": "h264",
     "fps": 30,
     "frames": 800,
     "time_range": {
@@ -49,9 +48,13 @@ Ex. `/api/gee/records/20151010`
 
 `GET /api/gee/records/id:<id>`
 
+###人物目标提取
+`GET /api/gee/personshots/id:<vid>/<frame_pos>`
+
+###人体目标识别
+`GET /api/gee/personshots/id:<person_shot_id>`
 
 ###请求监控视频流数据
-`"entrance": "/api/gee/feeds"`
 
 ####请求监控视频流数据列表
 
