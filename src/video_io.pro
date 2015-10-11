@@ -24,14 +24,14 @@ SOURCES += \
     redisclient/impl/redissyncclient.cpp \
     redisclient/impl/redisvalue.cpp \
     gdebug.cpp \
-    getfeature.cpp \
     memcache.cpp \
     sugar/sugar.cpp \
     dispatcher.cpp \
     extractor.cpp \
     gdatatype.cpp \
     videocacher.cpp \
-    videostreamhandler.cpp
+    videostreamhandler.cpp \
+    RBML/getfeature.cpp
 
 HEADERS += \
     sugar.h \
@@ -51,7 +51,8 @@ HEADERS += \
     gdebug.h \
     getfeature.h \
     memcache.h \
-    videocacher.h
+    videocacher.h \
+    RBML/getfeature.h
 
 OTHER_FILES += \
     PCA.xml

@@ -38,6 +38,8 @@ private:
 
     // where to save video
     string path_;    // default /tmp/gee/video/
+    string format_;
+    string codec_;
 
 
     // to do video shot memcache

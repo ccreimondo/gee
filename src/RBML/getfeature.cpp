@@ -2,7 +2,7 @@
 
 GetFeature::GetFeature() {
 	//初始化pca
-    FileStorage fs_pca("/media/reimondo/HDD/Workspace/Projects/gee/src/PCA.xml",
+    FileStorage fs_pca("/media/reimondo/HDD/Workspace/Projects/gee/src/RBML/PCA.xml",
                        FileStorage::READ);
 	fs_pca["mean"] >> pca.mean;
 	fs_pca["eigenvalues"] >> pca.eigenvalues;

@@ -37,7 +37,10 @@ string IP2HexStr(const string &ip)
         int ip_sub_i = std::stoi(strs[i], nullptr, 10);
         stringstream ss;
         ss << std::hex << ip_sub_i;
-        ip_hex_str += ss.str();
+        string str_sub = ss.str();
+        if (str_sub.size() == 1)
+            str_sub = "0" + str_sub;
+        ip_hex_str += str_sub;
     }
 
     return ip_hex_str;

@@ -53,7 +53,7 @@ private:
 //      VideoStreamMeta, VideoTime, VideoShot
 //
 struct VideoStreamMeta {
-    string format;      // input video stream format, we prefer H.264
+    string codec;      // input video stream format, we prefer H.264
     size_t fps;         // we prefer 30
     int solution[2];    // we prefer 1280x720
 };
@@ -66,13 +66,15 @@ struct VideoTime {
 class VideoShot {
 public:
     VideoShot(const string &video_id, const string &cam_id,
-              const size_t fps, const size_t frames, const string &codec,
+              const size_t fps, const size_t frames,
+              const string &format, const string &codec,
               const string &start_time, const string &end_time,
               const string &path, const string &filename);
     ~VideoShot() {}
 
     string get_id() { return IP2HexStr(cam_id_) + video_id_; }
     string get_cam_id() { return cam_id_; }
+    string get_format() { return format_; }
     string get_codec() { return codec_; }
     size_t get_fps() { return fps_; }
     size_t get_frames() { return frames_; }
@@ -83,7 +85,7 @@ public:
 
 private:
     string cam_id_, video_id_;
-    string codec_;
+    string format_, codec_;
     size_t fps_, frames_;
     string start_time_, end_time_;
     string path_, filename_;

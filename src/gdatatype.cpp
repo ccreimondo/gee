@@ -29,7 +29,8 @@ FloatArray PersonShot::mat_to_array()
 }
 
 VideoShot::VideoShot(const string &video_id, const string &cam_id,
-                     const size_t fps, const size_t frames, const string &codec,
+                     const size_t fps, const size_t frames,
+                     const string &format, const string &codec,
                      const string &start_time, const string &end_time,
                      const string &path, const string &filename)
 {
@@ -39,6 +40,7 @@ VideoShot::VideoShot(const string &video_id, const string &cam_id,
     video_id_ = video_id;
     fps_ = fps;
     frames_ = frames;
+    format_ = format;
     codec_ = codec;
 
     // video extra meta

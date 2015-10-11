@@ -40,7 +40,8 @@ void Dispatcher()
     char video_stream_addr[kBufferSize];
     // sprintf(video_stream_addr, "%s%s", g_dir_prefix, "cam.sdp");
     sprintf(video_stream_addr, "%s%s",
-            g_dir_prefix.c_str(), "example/videos/WP_20151002_09_40_51_Pro_lq.mp4");
+            g_dir_prefix.c_str(),
+            "example/videos/WP_20151002_09_40_51_Pro_lq.mp4");
 
     VideoStreamHandler(video_stream_addr, "192.168.3.1");
 }

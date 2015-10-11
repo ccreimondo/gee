@@ -15,6 +15,8 @@ VideoCacher::VideoCacher()
     path_ = "/tmp/gee/video/";
     filename_ = "";
     frames_counter_ = 0;
+    codec_ = "h264";
+    format_ = "mkv";
 }
 
 void VideoCacher::init(const string &cam_id,
@@ -29,11 +31,11 @@ void VideoCacher::init(const string &cam_id,
     video_start_time_ = video_time.time_start;
 
     // open a file to write video stream
-    filename_ = path_ + IP2HexStr(cam_id) + video_id + ".H264";
+    filename_ = IP2HexStr(cam_id) + video_id + "." + format_;
     Size v_size(video_stream_meta_.solution[0],
                 video_stream_meta_.solution[1]);
     // BUG (@Zhiqiang He): nothing saved
-    writer_.open(filename_, CV_FOURCC('X', '2', '6', '4'),
+    writer_.open(path_ + filename_, CV_FOURCC('X', '2', '6', '4'),
                 video_stream_meta_.fps, v_size);
     if (!writer_.isOpened()) {
         LogError("Fail to open /tmp/gee/video.");
@@ -66,6 +68,10 @@ void VideoCacher::handler(const string &cam_id,
     // update some data of video piece
     update(frames_counter, video_time);
 
+#ifndef NOGDEBUG
+    imshow("Test", frame);
+#endif
+
     // new video piece come
     if (cam_id != cam_id_) {
         // finish handling last video piece and release resource
@@ -87,7 +93,8 @@ void VideoCacher::release()
         // save video meta into redis
         VideoShot video_shot(video_id_, cam_id_,
                              video_stream_meta_.fps,
-                             frames_counter_, "H264",
+                             frames_counter_,
+                             format_, codec_,
                              video_start_time_,
                              video_end_time_,
                              path_, filename_);
