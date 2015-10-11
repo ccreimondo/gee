@@ -26,23 +26,29 @@ public:
     // cam_id (char[8]): COA87101 (192.168.113.1)
     // video_id (char[12]): 201510072210 (2015-10-07 22:10)
     // rect: point_1 (rect[0], rect[1]), point_2 (rect[2], rect[3])
-    PersonShot(string id, string cam_id, string video_id,
-               size_t frame_pos, vector<int> rect, cv::Mat &proper_vector);
+    PersonShot(const size_t sequence,
+               const string cam_id,
+               const string video_id,
+               const string frame_id,
+               const size_t frame_pos,
+               const vector<int> &rect,
+               const cv::Mat &proper_vector);
     ~PersonShot(){}
 
-    string get_id() { return id_; }
-    string get_cam_id() { return cam_id_; }
-    string get_video_id() { return video_id_; }
-    size_t get_frame_pos() { return frame_pos_; }
-    // TODO (@Zhiqiang He): check bug
-    vector<int> get_rect() { return rect_; }
-    cv::Mat get_proper_vector() { return proper_vector_; }
-
+    string get_id() const  { return id_; }
+    string get_cam_id() const { return cam_id_; }
+    string get_video_id() const { return video_id_; }
+    string get_frame_id() const { return frame_id_; }
+    size_t get_frame_pos() const { return frame_pos_; }
+    vector<int> get_rect() const { return rect_; }
     // covert Mat to float array
-    // TODO (@Xinqian Gu): please debug here
-    FloatArray mat_to_array();
+    FloatArray get_mat() const ;
 private:
-    string id_, cam_id_, video_id_;
+    // hex(ip) + %Y%m%d%I%M%S + frame_pos(len=5) + sequence(len=2)
+    string id_,
+           cam_id_,
+           video_id_,
+           frame_id_;
     size_t frame_pos_;
     vector<int> rect_;
     cv::Mat proper_vector_;
@@ -63,6 +69,8 @@ struct VideoTime {
                                     // time format: %Y%m%d%I%M%S
 };
 
+// video snapshot object
+//
 class VideoShot {
 public:
     VideoShot(const string &video_id, const string &cam_id,
@@ -72,23 +80,63 @@ public:
               const string &path, const string &filename);
     ~VideoShot() {}
 
-    string get_id() { return IP2HexStr(cam_id_) + video_id_; }
-    string get_cam_id() { return cam_id_; }
-    string get_format() { return format_; }
-    string get_codec() { return codec_; }
-    size_t get_fps() { return fps_; }
-    size_t get_frames() { return frames_; }
-    string get_start_time() { return start_time_; }
-    string get_end_time() { return end_time_; }
-    string get_path() { return path_; }
-    string get_filename() { return filename_; }
+    string get_id() const { return id_; }
+    string get_cam_id() const { return cam_id_; }
+    string get_format() const { return format_; }
+    string get_codec() const { return codec_; }
+    size_t get_fps() const { return fps_; }
+    size_t get_frames() const { return frames_; }
+    string get_start_time() const { return start_time_; }
+    string get_end_time() const { return end_time_; }
+    string get_fullpath() const { return path_ + filename_; }
 
 private:
-    string cam_id_, video_id_;
-    string format_, codec_;
+    string id_;     // hex(ip) + %Y%m%d%I%M%S
+    string format_, codec_; // codec for en/decoding, format for container
     size_t fps_, frames_;
     string start_time_, end_time_;
     string path_, filename_;
+    string cam_id_;
+};
+
+// key frame object
+//
+class KeyframeShot {
+public:
+    KeyframeShot(const string &video_id,
+                 const string &cam_id,
+                 const size_t frame_pos,
+                 const string &path,
+                 const string &filename,
+                 const cv::Mat &frame);
+    ~KeyframeShot() {}
+
+    string get_id() const { return id_; }
+    string get_fullpath() const { return path_ + filename_; }
+    vector<float> get_frame_mat();
+
+private:
+    string id_;     // hex(ip) + %Y%m%d%I%M%S + frame_pos (len=5)
+    string path_, filename_;
+    cv::Mat frame_;
+};
+
+// camera object
+//
+class IPCamera {
+public:
+    IPCamera(const string &ip,
+             const string &address);
+    ~IPCamera() {}
+
+    string get_id() const { return id_; }
+    string get_ip() const { return ip_; }
+    string get_address() const { return address_; }
+
+private:
+    string id_; // hex(ip)
+    string ip_;
+    string address_;    // physical address
 };
 
 #endif // GDATATYPE_H

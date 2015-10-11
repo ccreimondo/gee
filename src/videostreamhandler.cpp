@@ -5,15 +5,17 @@
 #include "extractor.h"
 #include "videocacher.h"
 #include "sugar/sugar.h"
+#include "gdatatype.h"
 #include "gdebug.h"
 
 using namespace cv;
 using std::string;
+using std::to_string;
 
 string GetVideoID();
 string GetSysTimeNow();
 
-void VideoStreamHandler(const string &sdp_addr, const string &cam_id)
+void VideoStreamHandler(const string &sdp_addr, const IPCamera ip_camera)
 {
     // create video stream capture
     VideoCapture cap(sdp_addr);
@@ -24,6 +26,7 @@ void VideoStreamHandler(const string &sdp_addr, const string &cam_id)
 
     // fill video stream meta
     VideoStreamMeta video_stream_meta;
+    // TODO (@Zhiqiang He): meaningful?
     video_stream_meta.codec = to_string(cap.get(CAP_PROP_FOURCC));
     video_stream_meta.fps = (size_t)cap.get(CAP_PROP_FPS);
     video_stream_meta.solution[0] = (int)cap.get(CAP_PROP_FRAME_WIDTH);
@@ -70,7 +73,7 @@ void VideoStreamHandler(const string &sdp_addr, const string &cam_id)
                     GetSysTimeNow();
         }
 
-        // set frame counter
+        // set frame counter and update end time of video
         frame_counter++;
         video_time.time_end = GetSysTimeNow();
 
@@ -87,21 +90,21 @@ void VideoStreamHandler(const string &sdp_addr, const string &cam_id)
             frame_counter = 0;
         }
 
-        // Yes, here can create asynchronous threads,
-        // concurrency handling.
+        // Here can create asynchronous threads to implement
+        // concurrency handling ?
         //
         // cache video stream
-        videocacher.handler(cam_id, video_id,
+        videocacher.handler(ip_camera, video_id,
                             video_time,
                             video_stream_meta,
                             frame_counter,
                             curr_frame);
-        extractor.handler(curr_frame,
-                          cam_id, video_id,
-                          frame_counter);
+        extractor.handler(ip_camera, video_id,
+                          frame_counter, curr_frame);
 
         // TODO (@Zhiqiang He): find a solution
-        VideoForwarder(cam_id, video_id,
+        VideoForwarder(ip_camera,
+                       video_id,
                        video_time,
                        video_stream_meta,
                        curr_frame);
@@ -124,7 +127,7 @@ string GetSysTimeNow()
     return GetTimeNow(fmt);
 }
 
-void VideoForwarder(const string &cam_id,
+void VideoForwarder(const IPCamera ip_camera,
                     const string &video_id,
                     const VideoTime video_time,
                     const VideoStreamMeta video_stream_meta,

@@ -26,14 +26,14 @@ MemCache::MemCache()
     }
 }
 
-bool MemCache::save(PersonShot person_shot)
+bool MemCache::save(const PersonShot person_shot)
 {
     RedisValue res;
 
     // cache mat of person shot - dimension + elements
     //
     string person_shot_matrix_id = "psm:" + person_shot.get_id();
-    FloatArray mat_array = person_shot.mat_to_array();
+    FloatArray mat_array = person_shot.get_mat();
 
     res = redis_sync_.command("RPUSH",
                               person_shot_matrix_id,
@@ -42,7 +42,8 @@ bool MemCache::save(PersonShot person_shot)
         LogError(res.toString().c_str());
         exit(1);
     }
-    for (int i = 0; i < mat_array.matrix.size(); ++i) {
+
+    for (size_t i = 0; i < mat_array.matrix.size(); ++i) {
         res = redis_sync_.command("RPUSH",
                                   person_shot_matrix_id,
                                   to_string(mat_array.matrix[i]));
@@ -58,14 +59,17 @@ bool MemCache::save(PersonShot person_shot)
     //  e.g. "10 10 20 20"
     vector<int> rect = person_shot.get_rect();
     string rect_in_str;
-    for (int i = 0; i < rect.size(); ++i)
+    for (size_t i = 0; i < rect.size(); ++i)
         rect_in_str = rect_in_str + to_string(rect[i]) + " ";
     rect_in_str.pop_back();
+
     string person_shot_id = "ps:" + person_shot.get_id();
     list<string> args = {
         person_shot_id,
         "cam_id", person_shot.get_cam_id(),
+        "frame_id", person_shot.get_frame_id(),
         "frame_pos", to_string(person_shot.get_frame_pos()),
+        "video_id", person_shot.get_video_id(),
         "proper_vector_id", person_shot_matrix_id,
         "rect", rect_in_str
     };
@@ -78,7 +82,7 @@ bool MemCache::save(PersonShot person_shot)
     return true;
 }
 
-bool MemCache::save(VideoShot video_shot)
+bool MemCache::save(const VideoShot video_shot)
 {
     RedisValue res;
 
@@ -100,8 +104,7 @@ bool MemCache::save(VideoShot video_shot)
 
     list<string> vsb_args = {
         video_shot_binary_id,
-        "filename", video_shot.get_filename(),
-        "path", video_shot.get_path()
+        "fullpath", video_shot.get_fullpath(),
     };
 
     // save video shot in redis hash
@@ -113,6 +116,29 @@ bool MemCache::save(VideoShot video_shot)
 
     // save binary of video
     res = redis_sync_.command("HMSET", vsb_args);
+    if (res.isError()) {
+        LogError(res.toString().c_str());
+        exit(1);
+    }
 
     return true;
+}
+
+
+bool MemCache::save(const KeyframeShot key_frame_shot)
+{
+    RedisValue res;
+
+    string keyframe_shot_id = "kf:" + key_frame_shot.get_id();
+
+    list<string> kf_args = {
+        keyframe_shot_id,
+        "fullpath", key_frame_shot.get_fullpath()
+    };
+
+    res = redis_sync_.command("HMSET", kf_args);
+    if (res.isError()) {
+        LogError(res.toString().c_str());
+        exit(1);
+    }
 }

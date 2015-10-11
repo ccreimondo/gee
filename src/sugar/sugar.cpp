@@ -9,6 +9,7 @@
 using std::string;
 using std::vector;
 using std::stringstream;
+using std::to_string;
 
 string GetTimeNow(const string fmt)
 {
@@ -33,7 +34,7 @@ string IP2HexStr(const string &ip)
     boost::split(strs, ip_, boost::is_any_of("."));
 
     string ip_hex_str;
-    for (int i = 0; i < strs.size(); ++i) {
+    for (size_t i = 0; i < strs.size(); ++i) {
         int ip_sub_i = std::stoi(strs[i], nullptr, 10);
         stringstream ss;
         ss << std::hex << ip_sub_i;
@@ -44,4 +45,21 @@ string IP2HexStr(const string &ip)
     }
 
     return ip_hex_str;
+}
+
+string FormatUnsignedInt(const size_t n, const size_t bits)
+{
+    string rv = to_string(n);
+
+    if (bits < rv.size()) {
+        LogError("Unsigned int format error!");
+        exit(1);
+    }
+
+    size_t delta = bits - rv.size();
+    for (size_t i = 0; i < delta; i++) {
+        rv = "0" + rv;
+    }
+
+    return rv;
 }

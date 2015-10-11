@@ -31,7 +31,8 @@ SOURCES += \
     gdatatype.cpp \
     videocacher.cpp \
     videostreamhandler.cpp \
-    RBML/getfeature.cpp
+    RBML/getfeature.cpp \
+    galgorithm.cc
 
 HEADERS += \
     sugar.h \
@@ -52,7 +53,8 @@ HEADERS += \
     getfeature.h \
     memcache.h \
     videocacher.h \
-    RBML/getfeature.h
+    RBML/getfeature.h \
+    galgorithm.h
 
 OTHER_FILES += \
     PCA.xml

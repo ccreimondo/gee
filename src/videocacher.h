@@ -19,7 +19,7 @@ public:
     ~VideoCacher() {}
 
     // entity
-    void handler(const string &cam_id,
+    void handler(const IPCamera ip_camera,
                  const string &video_id,
                  const VideoTime video_time,
                  const VideoStreamMeta video_stream_meta,
@@ -53,7 +53,7 @@ private:
 
 
     // init a new video cache
-    void init(const string &cam_id,
+    void init(const IPCamera ip_camera,
               const string &video_id,
               VideoTime video_time,
               VideoStreamMeta video_stream_meta);

@@ -30,8 +30,9 @@ public:
 
     // save
     //
-    bool save(PersonShot person_shot);
-    bool save(VideoShot video_shot);
+    bool save(const PersonShot person_shot);
+    bool save(const VideoShot video_shot);
+    bool save(const KeyframeShot key_frame_shot);
 
     // callback
     //

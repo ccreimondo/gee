@@ -36,4 +36,8 @@ inline void LogError(const char *error)
     fprintf(stderr, "ERROR - %s\n", error);
 }
 
+// convert unsigned int to string with limited format
+//
+string FormatUnsignedInt(const size_t n, const size_t bits);
+
 #endif // SUGAR_H

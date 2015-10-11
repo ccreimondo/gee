@@ -19,11 +19,12 @@ using std::string;
 
 // entity
 //
-void VideoStreamHandler(const string &sdp_addr, const string &cam_id);
+void VideoStreamHandler(const string &sdp_addr,
+                        const IPCamera ip_camera);
 
 // forward video stream to front-end
 //
-void VideoForwarder(const string &cam_id,
+void VideoForwarder(const IPCamera ip_camera,
                     const string &video_id,
                     const VideoTime video_time,
                     const VideoStreamMeta video_stream_meta,

@@ -1,14 +1,15 @@
-#include <sstream>
-
 #include "extractor.h"
 #include "memcache.h"
 #include "sugar/sugar.h"
 #include "gdebug.h"
 
-using std::stringstream;
+using namespace cv;
+using std::string;
 
 Extractor::Extractor()
 {
+    path_ = "/tmp/gee/keyframes/";
+    filename_ = "";
     is_init_ = false;
 }
 
@@ -26,20 +27,34 @@ void Extractor::set_frame_refer(const Mat &frame)
     is_init_ = true;
 }
 
-void Extractor::handler(const Mat &frame, string cam_id,
-                        string video_id, size_t frame_pos)
+void Extractor::handler(const IPCamera ip_camera, const string &video_id,
+                        const size_t frame_pos, const Mat &frame)
 {
     // set frame reference
     if (!is_init_) {
         set_frame_refer(frame);
     }
 
+    // extracting keyframe
     if (HistDiff(frame_refer_, frame)) {
+        // cache the new keyframe
+        filename_ = ip_camera.get_id() +
+                    video_id + FormatUnsignedInt(frame_pos, 5) + ".jpeg";
+        string fullpath = path_ + filename_;
+        vector<int> c_params;
+        c_params.push_back(CV_IMWRITE_JPEG_QUALITY);
+        imwrite(fullpath, frame, c_params);
+        KeyframeShot key_frame_shot(video_id, ip_camera.get_id(),
+                                    frame_pos,
+                                    path_, filename_,
+                                    frame);
+        memcache_.save(key_frame_shot);
+
         // found human and get bound in rectangle
         vector<Rect> found_rects(HumanDetect(frame));
 
-		for (int i = 0; i < found_rects.size(); i++) {
-			
+        for (size_t i = 0; i < found_rects.size(); i++) {
+
 			Mat person_image;
 			frame(found_rects[i]).copyTo(person_image);
 
@@ -49,11 +64,7 @@ void Extractor::handler(const Mat &frame, string cam_id,
 			imshow("Extractor Debug", person_image);
 #endif
             // get feature of each person image
-
-			Mat person_feature=get_feature_.getFeature(person_image);
-
-            // get personshot
-			string id = get_id(cam_id, video_id, frame_pos, i);
+            Mat person_feature = get_feature_.getFeature(person_image);
 
 			vector<int> rect;
 			rect.push_back(found_rects[i].x);
@@ -61,44 +72,19 @@ void Extractor::handler(const Mat &frame, string cam_id,
 			rect.push_back(found_rects[i].x + found_rects[i].width);
 			rect.push_back(found_rects[i].y + found_rects[i].height);
 
-            PersonShot person_shot(id, cam_id, video_id,
-                                   frame_pos, rect, person_feature);
-
+            PersonShot person_shot(i,
+                                   ip_camera.get_id(),
+                                   video_id,
+                                   key_frame_shot.get_id(),
+                                   frame_pos,
+                                   rect,
+                                   person_feature);
             memcache_.save(person_shot);
 		}
 
         // update frame refer
         set_frame_refer(frame);
     }
-}
-
-// Form id.
-//
-string Extractor::get_id(const string cam_id, const string video_id,
-                         const size_t frame_pos, int sequence) {
-	stringstream ss, sss;
-	string str_frame_pos, str_sequence;
-	ss << frame_pos;
-	ss >> str_frame_pos;
-	if (str_frame_pos.size() == 1) {
-		str_frame_pos = "0000" + str_frame_pos;
-	}
-	if (str_frame_pos.size() == 2) {
-		str_frame_pos = "000" + str_frame_pos;
-	}
-	if (str_frame_pos.size() == 3) {
-		str_frame_pos = "00" + str_frame_pos;
-	}
-	if (str_frame_pos.size() == 4) {
-		str_frame_pos = "0" + str_frame_pos;
-	}
-	sss << sequence;
-	sss >> str_sequence;
-	if (str_sequence.size() == 1) {
-		str_sequence = "0" + str_sequence;
-	}
-
-    return IP2HexStr(cam_id) + video_id + str_frame_pos + str_sequence;
 }
 
 // Judge keyframe by diff frame.
@@ -146,22 +132,22 @@ bool HistDiff(const Mat &frame_t1, const Mat &frame_t2)
     MatND hist_f_t2;
 
     // calculate the histograms for the HSV images
-    calcHist(&hsv_f_t1, 1, channels, Mat(), hist_f_t1, 2, hist_size, ranges, true, false);
+    calcHist(&hsv_f_t1, 1, channels, Mat(), hist_f_t1,
+             2, hist_size, ranges, true, false);
     normalize(hist_f_t1, hist_f_t1, 0, 1, NORM_MINMAX, -1, Mat());
 
-    calcHist(&hsv_f_t2, 1, channels, Mat(), hist_f_t2, 2, hist_size, ranges, true, false);
+    calcHist(&hsv_f_t2, 1, channels, Mat(), hist_f_t2,
+             2, hist_size, ranges, true, false);
     normalize(hist_f_t2, hist_f_t2, 0, 1, NORM_MINMAX, -1, Mat());
 
     // $start test
     // apply the histogram comparison methods
-    /*
-    for (int i = 0; i < 4; i++ )
-    {
-        int compare_method = i;
-        double f1_f2 = compareHist(hist_f_t1, hist_f_t2, compare_method);
-        fprintf(stdout, " Method [%d] f1-f2 : %f \n", i, f1_f2);
-    }
-    */
+    // for (int i = 0; i < 4; i++ )
+    // {
+    //     int compare_method = i;
+    //     double f1_f2 = compareHist(hist_f_t1, hist_f_t2, compare_method);
+    //     fprintf(stdout, " Method [%d] f1-f2 : %f \n", i, f1_f2);
+    // }
     // $end test
 
     double f1_f2= compareHist(hist_f_t1, hist_f_t2, CV_COMP_CORREL);
@@ -175,26 +161,26 @@ bool HistDiff(const Mat &frame_t1, const Mat &frame_t2)
 vector<Rect> HumanDetect(const Mat &frame)
 {
     vector<Rect> found_rects, found_rects_filtered;
-    // Prepare HOG descripter
+    // prepare HOG descripter
     HOGDescriptor hog;
     hog.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
 
     hog.detectMultiScale(frame, found_rects, 0, Size(8,8), Size(32, 32), 1.05, 2);
-    // filter?
-    for (int i = 0; i < found_rects.size(); i++) {
+    // Filter?
+    for (size_t i = 0; i < found_rects.size(); i++) {
         Rect r = found_rects[i];
-        int j = 0;
+        size_t j = 0;
         for (j = 0; j < found_rects.size(); j++)
             if (j != i && (r & found_rects[j]) == r) break;
         if (j == found_rects.size())
             found_rects_filtered.push_back(r);
     }
-	for (int i = 0; i<found_rects_filtered.size(); i++)
-	{
+    for (size_t i = 0; i<found_rects_filtered.size(); i++) {
 		found_rects_filtered[i].x += cvRound(found_rects_filtered[i].width*0.2);
 		found_rects_filtered[i].width = cvRound(found_rects_filtered[i].width*0.6);
 		found_rects_filtered[i].y += cvRound(found_rects_filtered[i].height*0.07);
 		found_rects_filtered[i].height = cvRound(found_rects_filtered[i].height*0.8);
-	}
+    }
+
     return found_rects_filtered;
 }

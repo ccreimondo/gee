@@ -19,22 +19,21 @@ VideoCacher::VideoCacher()
     format_ = "mkv";
 }
 
-void VideoCacher::init(const string &cam_id,
+void VideoCacher::init(IPCamera ip_camera,
                        const string &video_id,
                        VideoTime video_time,
                        VideoStreamMeta video_stream_meta)
 {
     // init new video meta
-    cam_id_ = cam_id;
+    cam_id_ = ip_camera.get_id();
     video_id_ = video_id;
     video_stream_meta_ = video_stream_meta;
     video_start_time_ = video_time.time_start;
 
     // open a file to write video stream
-    filename_ = IP2HexStr(cam_id) + video_id + "." + format_;
+    filename_ = cam_id_ + video_id_ + "." + format_;
     Size v_size(video_stream_meta_.solution[0],
                 video_stream_meta_.solution[1]);
-    // BUG (@Zhiqiang He): nothing saved
     writer_.open(path_ + filename_, CV_FOURCC('X', '2', '6', '4'),
                 video_stream_meta_.fps, v_size);
     if (!writer_.isOpened()) {
@@ -53,7 +52,7 @@ void VideoCacher::update(size_t frames_counter,
     video_end_time_ = video_time.time_end;
 }
 
-void VideoCacher::handler(const string &cam_id,
+void VideoCacher::handler(const IPCamera ip_camera,
                           const string &video_id,
                           const VideoTime video_time,
                           const VideoStreamMeta video_stream_meta,
@@ -62,7 +61,7 @@ void VideoCacher::handler(const string &cam_id,
 {
     // create the first video piece
     if (!is_init()) {
-        init(cam_id, video_id, video_time, video_stream_meta);
+        init(ip_camera, video_id, video_time, video_stream_meta);
     }
 
     // update some data of video piece
@@ -73,12 +72,12 @@ void VideoCacher::handler(const string &cam_id,
 #endif
 
     // new video piece come
-    if (cam_id != cam_id_) {
+    if (video_id_ != video_id) {
         // finish handling last video piece and release resource
         release();
 
         // create a new video piece
-        init(cam_id, video_id, video_time, video_stream_meta);
+        init(ip_camera, video_id, video_time, video_stream_meta);
         update(frames_counter, video_time);
         writer_ << frame;
     } else {

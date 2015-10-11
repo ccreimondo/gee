@@ -14,9 +14,9 @@
 
 #include <vector>
 #include <string>
+
 #include <opencv2/opencv.hpp>
 #include <boost/asio.hpp>
-
 #include "redisclient/redissyncclient.h"
 #include "RBML/getfeature.h"
 #include "gdatatype.h"
@@ -34,20 +34,25 @@ public:
     bool is_init() { return is_init_; }
 
     // new frame filter
-    void handler(const Mat &frame, string cam_id,
-                 string video_id, size_t frame_pos);
+    void handler(const IPCamera ip_camera, const string &video_id,
+                 const size_t frame_pos,const Mat &frame);
 
 private:
-	// id (char[27]): cam_id + video_id + frame_pos + sequence
-    string get_id(const string cam_id,
-                  const string video_id,
-                  const size_t frame_pos,
-                  int sequence);
+    // id (char[27]): cam_id + video_id + frame_pos + sequence
+    string get_id(const string &cam_id,
+                  const string &video_id,
+                  const size_t &frame_pos,
+                  const int sequence);
 
 private:
-    Mat frame_refer_;  // frame reference
-    bool is_init_;  // default false
-	GetFeature get_feature_;	//using to get feature and pca
+    Mat frame_refer_;   // frame reference
+    bool is_init_;      // default false
+    // for imwrite
+    string path_;
+    string filename_;
+
+    // using to get feature and PCA
+    GetFeature get_feature_;
 
     // to do memcache
     MemCache memcache_;
