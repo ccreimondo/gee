@@ -4,7 +4,7 @@ gee
 ##About back-end API
 
 1. RESTful API
-2. HTTP Methods: GET, POST
+2. HTTP Methods: GET
 3. Data exchange: JSON
 4. Time format: yyyy-MM-dd HH:mm:ss
 5. `<>` 表示变量
@@ -12,17 +12,17 @@ gee
 参数说明:
 ```json
 {
-    "entrance": "/api/gee/feeds",
+    "entrance": "http://localhost:5000/api/gee/feeds/",
     "count": 10,
     "targets": [t1, t2...]
 }
 ```
 
 ###请求监控视频数据
-####获取某天的监控视频列表
 
-`GET /api/gee/records/data:<date>`
-Ex. `/api/gee/records/20151010`
+####请求监控视频数据列表
+`GET /api/gee/videoshots/date:<date>`
+Ex. `/api/gee/videohosts/date:20151010`
 
 返回列表中的对象
 ```json
@@ -30,6 +30,7 @@ Ex. `/api/gee/records/20151010`
     "id": "c0a831201510100910540055700",
     "format": "ogg",
     "codec": "h264",
+    "filename": "id.format",
     "fps": 30,
     "frames": 800,
     "time_range": {
@@ -46,19 +47,34 @@ Ex. `/api/gee/records/20151010`
 
 ####请求单个监控视频数据
 
-`GET /api/gee/records/id:<id>`
+`GET <entrance> + <filename>`
 
 ###人物目标提取
-`GET /api/gee/personshots/id:<vid>/<frame_pos>`
+
+`GET /api/gee/personshots/vid:<vid>/<frame_pos>`
+
+返回列表中的对象
+```json
+{
+}
+```
+
 
 ###人体目标识别
-`GET /api/gee/personshots/id:<person_shot_id>`
+
+`GET /api/gee/personshots/<person_shot_id>`
+
+返回列表中的对象
+```json
+{
+}
+```
 
 ###请求监控视频流数据
 
 ####请求监控视频流数据列表
 
-`GET /api/gee/feeds/`
+`GET /api/gee/feeds`
 
 返回列表中的对象
 ```json
@@ -77,5 +93,5 @@ Ex. `/api/gee/records/20151010`
 
 ####请求单个监控视频流数据
 
-`GET /api/gee/feeds/id:<id>`
+`GET <entrance> + <id>`
 
