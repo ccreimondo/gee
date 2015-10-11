@@ -38,7 +38,6 @@ Ex. `/api/gee/videohosts/date:20151010`
         "end": "2015-10-10 22:10:10"
     },
     "camera": {
-        "id": "c0a80301",
         "ip": "192.168.3.1",
         "address": ""
     }
@@ -56,17 +55,35 @@ Ex. `/api/gee/videohosts/date:20151010`
 返回列表中的对象
 ```json
 {
+    "filename": "person_shot_tmp_id.pst",
+    "id": "person_shot_tmp_id",
+    "scale": "3:8"
 }
 ```
 
-
 ###人体目标识别
 
-`GET /api/gee/personshots/<person_shot_id>`
+`GET /api/gee/personshots/<person_shot_tmp_id>`
 
 返回列表中的对象
 ```json
 {
+    "filename": "person_shot_id.ps",    
+    "rect": "10 10 20 20",
+    "frame_name": "frame_id",            // to fetch picture of frame 
+    "frame_pos": "frame_pos",
+    "video": {
+        "fps": 30,
+        "frames": 800,
+        "time_range": {
+            "start": "2015-10-10 22:10:00",
+            "end": "2015-10-10 22:10:10"
+        }
+    },
+    "camera": {
+        "ip": "ip",
+        "address": ""
+    }
 }
 ```
 
