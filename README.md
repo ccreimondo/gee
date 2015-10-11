@@ -12,7 +12,7 @@ gee
 参数说明:
 ```json
 {
-    "entrance": "/api/gee/feeds/",
+    "entrance": "/api/gee/feeds",
     "count": 10,
     "targets": [t1, t2...]
 }
@@ -21,10 +21,10 @@ gee
 ###请求监控视频数据
 `"entrance": "/api/gee/records"`
 
-####获取某天的监控视频数据
+####获取某天的监控视频列表
 
-`GET /api/gee/records/<date>`
-E.x. `/api/gee/records/20151010`
+`GET /api/gee/records/data:<date>`
+Ex. `/api/gee/records/20151010`
 
 返回列表中的对象
 ```json
@@ -38,8 +38,8 @@ E.x. `/api/gee/records/20151010`
         "end": "2015-10-10 22:10:10"
     },
     "camera": {
-        "id": "c0a831",
-        "ip": "192.168.113.1",
+        "id": "c0a80301",
+        "ip": "192.168.3.1",
         "address": ""
     }
 }
@@ -47,23 +47,23 @@ E.x. `/api/gee/records/20151010`
 
 ####请求单个监控视频数据
 
-`GET /api/gee/records/<id>`
+`GET /api/gee/records/id:<id>`
 
 
 ###请求监控视频流数据
-`"entrance": "/api/gee/records"`
+`"entrance": "/api/gee/feeds"`
 
 ####请求监控视频流数据列表
 
-`GET /api/gee/records/`
+`GET /api/gee/feeds/`
 
 返回列表中的对象
 ```json
 {
-    "id": "c0a831",
+    "id": "c0a80301",
     "camera": {
-        "id": "c0a831",
-        "ip": "192.168.113.1",
+        "id": "c0a80301",
+        "ip": "192.168.3.1",
         "address": ""
     },
     "format": "H264",
@@ -74,5 +74,5 @@ E.x. `/api/gee/records/20151010`
 
 ####请求单个监控视频流数据
 
-`GET /api/gee/records/<id>`
+`GET /api/gee/feeds/id:<id>`
 
