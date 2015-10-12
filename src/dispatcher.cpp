@@ -11,9 +11,7 @@
 using namespace cv;
 using std::string;
 using std::vector;
-
-const int kBufferSize = 80;
-const string g_dir_prefix = "/media/reimondo/HDD/Workspace/Projects/gee/";
+using std::to_string;
 
 void Dispatcher();
 void MotionDetect(Mat &frame);
@@ -39,12 +37,27 @@ void Test()
 //
 void Dispatcher()
 {
-    char video_stream_addr[kBufferSize];
-    // sprintf(video_stream_addr, "%s%s", g_dir_prefix, "cam.sdp");
-    sprintf(video_stream_addr, "%s%s",
-            g_dir_prefix.c_str(),
-            "example/videos/WP_20151002_09_40_51_Pro_lq.mp4");
+    const string kDirPrefix = "/media/reimondo/HDD/Workspace/Projects/gee/";
+    string video_stream_addr;
 
-    IPCamera ip_camera("192.168.3.1", "");
-    VideoStreamHandler(video_stream_addr, ip_camera);
+    // video stream from raspberry pi
+    // sprintf(video_stream_addr, "%s%s", g_dir_prefix, "cam.sdp");
+
+    // static videos files for debugging
+    vector<string> video_list;
+    video_list.push_back("8_x264.mkv");
+    video_list.push_back("38_720.mp4");
+    video_list.push_back("218_x264_720.mkv");
+    video_list.push_back("220_x264_720.mkv");
+    for (size_t i = 0; i < video_list.size(); ++i) {
+        video_stream_addr = kDirPrefix + "example/videos/" + video_list[i];
+        string camera_ip("192.168.3.");
+        camera_ip += to_string(i);
+        IPCamera ip_camera(camera_ip, "cqu");
+        try {
+            VideoStreamHandler(video_stream_addr, ip_camera);
+        } catch (const char *e) {
+            LogInfo("Exception", "something done.");
+        }
+    }
 }

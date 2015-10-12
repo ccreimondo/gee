@@ -12,7 +12,7 @@ from flask import jsonify, g, abort
 
 # default configuration
 APP_NAME = "Actor"
-LOG_DIR = "log"
+LOG_DIR = "/tmp/actor/log/"
 REDIS_HOST = "127.0.0.1"
 REDIS_PORT = 6379
 REDIS_DB = 0
@@ -106,7 +106,7 @@ def fetch_frame(vid, frame_pos):
     video_shot = get_redis().hgetall(vs_id)
     video_shot_where = get_redis().hgetall(vsb_id)
     if not video_shot_where or not video_shot:
-        abort(404)
+        return None
     video_shot_full_path = os.path.join(video_shot_where["path"],
                                         video_shot_where["filename"])
 
@@ -115,14 +115,12 @@ def fetch_frame(vid, frame_pos):
         return None
 
     cap = cv2.VideoCapture(video_shot_full_path)
-    if not cap.isOpened():
-        print "Fail to open vodeo shot!"
-        exit(1)
-
     cap.set(cv2.CAP_PROP_POS_FRAMES, float(frame_pos))
-    ret, frame = cap.read()
-    if ret:
-        return frame
+
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if ret:
+            return frame
 
     return None
 
@@ -154,6 +152,7 @@ def human_detect(frame):
                     break
             else:
                 found_rects_filtered.append(r)
+
     return found_rects_filtered
 
 
@@ -164,8 +163,13 @@ def extract_person_shots(frame):
         list of person_shots
     """
     rectangles = human_detect(frame)
-    # May not work
-    return [frame[rect[1]:rect[3], rect[0]:rect[2]] for rect in rectangles]
+    person_shots = []
+    for rect in rectangles:
+        frame_n = np.copy(frame)
+        (x, y, w, h) = rect
+        person_shot = frame_n[y:y+h, x:x+w]
+        person_shots.append(person_shot)
+    return person_shots
 
 
 # match
@@ -215,6 +219,7 @@ def get_gee_person_shots(vid, frame_pos):
     qf_full_path = "{}{}.{}".format("actor/static/tmp/query-frames/",
                                     qf_id, "jpeg")
     cv2.imwrite(qf_full_path, target_frame)
+    # return person shots rect
     person_shots = extract_person_shots(target_frame)
     for idx, ps in enumerate(person_shots):
         pst_id = "{}{:05d}{:02d}".format(vid, int(frame_pos), idx)
