@@ -4,8 +4,8 @@ gee
 ##About back-end API
 
 1. RESTful API
-2. HTTP Methods: GET
-3. Data exchange: JSON
+2. HTTP methods: GET
+3. Data exchange format: JSON
 4. Time format: yyyy-MM-dd HH:mm:ss
 5. `<>` 表示变量
 5. 返回单个对象
@@ -46,11 +46,11 @@ Ex. `/api/gee/videohosts/date:20151010`
 
 ####请求单个监控视频数据
 
-`GET <entrance> + <filename>`
+`GET <entrance><filename>`
 
 ###人物目标提取
 
-`GET /api/gee/personshots/vid:<vid>/<frame_pos>`
+`GET /api/gee/personshots/<vid>/<frame_pos>`
 
 返回列表中的对象
 ```json
@@ -68,13 +68,15 @@ Ex. `/api/gee/videohosts/date:20151010`
 返回列表中的对象
 ```json
 {
-    "filename": "person_shot_id.ps",    
+    "filename": "person_shot_id.jpeg",    
     "rect": "10 10 20 20",
-    "frame_name": "frame_id",            // to fetch picture of frame 
+    "frame": "frame_id.kf",            // to fetch picture of frame 
     "frame_pos": "frame_pos",
-    "video": {
+    "video_shost": {
         "fps": 30,
         "frames": 800,
+        "codec": "h264",
+        "format": "mkv",
         "time_range": {
             "start": "2015-10-10 22:10:00",
             "end": "2015-10-10 22:10:10"
@@ -110,5 +112,5 @@ Ex. `/api/gee/videohosts/date:20151010`
 
 ####请求单个监控视频流数据
 
-`GET <entrance> + <id>`
+`GET <entrance><id>`
 

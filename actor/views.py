@@ -1,12 +1,14 @@
 # coding=utf-8
 
 import os
+import cv2
 import redis
 import logging
+import numpy as np
 
 from actor import app
 from datetime import datetime
-from flask import jsonify, g
+from flask import jsonify, g, abort
 
 # default configuration
 APP_NAME = "Actor"
@@ -62,7 +64,7 @@ def fetch_records_list(date):
     r = get_redis()
     video_shots = r.keys("vs:*")
     video_shorts_f = []
-    for vid in video_shots:
+    for idx, vid in enumerate(video_shots):
         video_shot = r.hgetall(vid)
         id_f = vid.split(':')[1]
         raw_time_fmt = "%Y%m%d%H%M%S"
@@ -74,9 +76,10 @@ def fetch_records_list(date):
             "end_time": end_time.strftime(time_fmt)
         }
         camera_f = {
-            "id": ipv4_to_hex(video_shot["cam_id"]),
+            "id": video_shot["cam_id"],
             "ip": video_shot["cam_id"],
-            "address": ""
+            "address": "",
+            "index": idx
         }
         video_shot_f = {
             "id": id_f,
@@ -90,6 +93,84 @@ def fetch_records_list(date):
         }
         video_shorts_f.append(video_shot_f)
     return video_shorts_f
+
+
+def fetch_frame(vid, frame_pos):
+    """Fetch frame from video shot with given vid and frame position.
+
+    Returns:
+        Mat frame
+    """
+    vs_id = "vs:{}".format(vid)
+    vsb_id = "vsb:{}".format(vid)
+    video_shot = get_redis().hgetall(vs_id)
+    video_shot_where = get_redis().hgetall(vsb_id)
+    if not video_shot_where or not video_shot:
+        abort(404)
+    video_shot_full_path = os.path.join(video_shot_where["path"],
+                                        video_shot_where["filename"])
+
+    vs_frames = video_shot["frames"]
+    if frame_pos > vs_frames:
+        return None
+
+    cap = cv2.VideoCapture(video_shot_full_path)
+    if not cap.isOpened():
+        print "Fail to open vodeo shot!"
+        exit(1)
+
+    cap.set(cv2.CAP_PROP_POS_FRAMES, float(frame_pos))
+    ret, frame = cap.read()
+    if ret:
+        return frame
+
+    return None
+
+
+def cache_query_frame(frame):
+    """Cache frame to redis.
+
+    Returns:
+        key
+    """
+    pass
+
+
+def inside(r, q):
+    rx, ry, rw, rh = r
+    qx, qy, qw, qh = q
+    return rx > qx and ry > qy and rx + rw < qx + qw and ry + rh < qy + qh
+
+
+def human_detect(frame):
+    hog = cv2.HOGDescriptor()
+    hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
+
+    found_rects, w = hog.detectMultiScale(frame, 0, (8, 8), (32, 32), 1.05, 2)
+    found_rects_filtered = []
+    for ri, r in enumerate(found_rects):
+            for qi, q in enumerate(found_rects):
+                if ri != qi and inside(r, q):
+                    break
+            else:
+                found_rects_filtered.append(r)
+    return found_rects_filtered
+
+
+def extract_person_shots(frame):
+    """Extract person shots from the given frame.
+
+    Returns:
+        list of person_shots
+    """
+    rectangles = human_detect(frame)
+    # May not work
+    return [frame[rect[1]:rect[3], rect[0]:rect[2]] for rect in rectangles]
+
+
+# match
+def match():
+    pass
 
 
 @app.route("/")
@@ -119,18 +200,41 @@ def get_gee_video_shots(date):
     return jsonify(res)
 
 
-@app.route("/api/gee/videoshots/<vid>")
-def get_gee_video_shot(vid):
-    return "error"
+@app.route("/api/gee/personshots/<vid>/<frame_pos>")
+def get_gee_person_shots(vid, frame_pos):
+    res = {
+        "entrance": "http://10.250.94.25:5000/static/tmp/person-shots/",
+        "count": 0,
+        "targets": []
+    }
+    target_frame = fetch_frame(vid, frame_pos)
+    if target_frame is None:
+        abort(404)  # frame not found
+    # save the query frame to debug
+    qf_id = "{}{:05d}".format(vid, int(frame_pos))
+    qf_full_path = "{}{}.{}".format("actor/static/tmp/query-frames/",
+                                    qf_id, "jpeg")
+    cv2.imwrite(qf_full_path, target_frame)
+    person_shots = extract_person_shots(target_frame)
+    for idx, ps in enumerate(person_shots):
+        pst_id = "{}{:05d}{:02d}".format(vid, int(frame_pos), idx)
+        # cache mat for searching next
+        filename = "{}.{}".format(pst_id, "jpeg")
+        full_path = "{}{}".format("actor/static/tmp/person-shots/", filename)
+        cv2.imwrite(full_path, ps)
+        target = {
+            "filename": filename,
+            "id": pst_id,
+            "scale": "3:8",
+            "parent": "{}.{}".format(qf_id, "jpeg")
+        }
+        res["targets"].append(target)
+    res["count"] = len(res["targets"])
+    return jsonify(res)
 
 
 @app.route("/api/gee/personshots/<person_shot_id>")
 def get_gee_person_shots_archive(person_shot_id):
-    pass
-
-
-@app.route("/api/gee/personshots/vid:<vid>/<frame_pos>")
-def get_gee_person_shots(vid, frame_pos):
     pass
 
 
