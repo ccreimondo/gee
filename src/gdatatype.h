@@ -88,7 +88,8 @@ public:
     size_t get_frames() const { return frames_; }
     string get_start_time() const { return start_time_; }
     string get_end_time() const { return end_time_; }
-    string get_fullpath() const { return path_ + filename_; }
+    string get_filename() const { return filename_; }
+    string get_path() const { return path_; }
 
 private:
     string id_;     // hex(ip) + %Y%m%d%I%M%S
@@ -112,7 +113,8 @@ public:
     ~KeyframeShot() {}
 
     string get_id() const { return id_; }
-    string get_fullpath() const { return path_ + filename_; }
+    string get_filename() const { return filename_; }
+    string get_path() const { return path_; }
     vector<float> get_frame_mat();
 
 private:
