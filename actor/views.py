@@ -111,7 +111,7 @@ def fetch_frame(vid, frame_pos):
                                         video_shot_where["filename"])
 
     vs_frames = video_shot["frames"]
-    if frame_pos > vs_frames:
+    if int(frame_pos) > int(vs_frames):
         return None
 
     cap = cv2.VideoCapture(video_shot_full_path)
