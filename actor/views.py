@@ -8,7 +8,7 @@ import numpy as np
 
 from actor import app
 from datetime import datetime
-from flask import jsonify, g, abort
+from flask import jsonify, g, abort, send_file, request
 
 # default configuration
 APP_NAME = "Actor"
@@ -182,7 +182,7 @@ def hello():
     return "IBM Power Contest 2015 @Continue"
 
 
-@app.route("/api/gee/feeds")
+@app.route("/api/gee/feeds/")
 def get_gee_feeds():
     res = {
         "entrance": "http://10.250.94.25:5000/api/gee/feeds/",
@@ -204,7 +204,12 @@ def get_gee_video_shots(date):
     return jsonify(res)
 
 
-@app.route("/api/gee/personshots/<vid>/<frame_pos>")
+@app.route("/api/gee/videoshots/<video_id>")
+def get_gee_video_shot(video_id):
+    abort(500)
+
+
+@app.route("/api/gee/personshots/<vid>/<frame_pos>/")
 def get_gee_person_shots(vid, frame_pos):
     res = {
         "entrance": "http://10.250.94.25:5000/static/tmp/person-shots/",
@@ -238,9 +243,31 @@ def get_gee_person_shots(vid, frame_pos):
     return jsonify(res)
 
 
-@app.route("/api/gee/personshots/<person_shot_id>")
+@app.route("/api/gee/personshots/<vid>/<frame_pos>/<person_shot_tmp_id>")
+def get_gee_person_shot(vid, frame_pos, pst_id):
+    abort(500)
+
+
+@app.route("/api/gee/personshots/<person_shot_id>", methods=["GET", "POST"])
 def get_gee_person_shots_archive(person_shot_id):
-    pass
+    if request.method == "GET":
+        abort(500)
+
+    # search person in database with target person shot
+    if request.method == "POST":
+        res = {
+            "entrance": "http://10.250.94.25:5000/static/keyframes/",
+            "count": 0,
+            "targets": []
+        }
+
+    abort(500)
+
+
+@app.route("/api/gee/keyframes/<keyframe_id>")
+def get_gee_keyframes(keyframe_id):
+    filename = "{}{}.{}".format("actor/static/keyframes/", keyframe_id, "jpeg")
+    return send_file(filename, mimetype="image/jpeg")
 
 
 def error_log_file_handler():
