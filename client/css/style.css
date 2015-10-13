@@ -40,7 +40,7 @@ body {
 }
 
 #container {
-    width: 48px;
+    width: 72px;
     height: 128px;
     -webkit-transition: -webkit-transform 1s;  
     transition: transform 1s;  
@@ -69,7 +69,7 @@ body {
     background: #20404A;
     border: 1px solid #3498DB;
     border-radius: 5px;
-    margin: 45px 50px;
+    margin: 45px 18px;
     cursor: pointer;
 }
 
@@ -93,8 +93,8 @@ body {
 }
 
 .one {
-    width: 48px;
-    height: 128px;
+    width: auto;
+    height: auto;
     position: absolute;
     bottom: 0;
     left: 0;
@@ -103,7 +103,7 @@ body {
 }
 
 .one img {
-    width: 48px;
+    width: 72px;
     border: 1px solid #3498DB;
     box-shadow: 0px 1px 3px #3498DB;
 }
@@ -209,7 +209,50 @@ body {
     height: 100%;
     background: url('../imgs/bg.png');
     
-    display: none;
+    display: block;
+}
+
+.track_target_container {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    min-height: 82px;
+    height: auto; 
+    /*background: red;*/
+    background: url('../imgs/result_bg.png');
+}
+
+.track_target_container .track_target_head {
+    height: 82px;
+    width: 55px;
+    line-height: 40px;
+    text-align: center;
+    float: left;
+    font-size: 20px;
+    background: rgb(41, 128, 185);
+    color: #ecf0f1;
+    font-family: 'Heiti, Microsoft YaHei, Adobe 黑体 Std';
+}
+.track_target_container .track_target_list {
+    float: left;
+}
+
+.one_track_target {
+    float: left;
+    margin: 0 40px;
+    height: 80px;
+}
+.one_track_target .one_track_img {
+    height: 80px;
+    position: absolute;
+    bottom: 0;
+    
+    border: 1px solid #3498DB;
+    transition: height 300ms, width 300ms;
+}
+.one_track_target .one_track_img:hover {
+    height: 144px;
+    width: auto;
 }
 
 .mulmonitor_container {
@@ -310,8 +353,15 @@ body {
     width: 1280px;
     height: 100%;
     z-index: 1;
-    
-    display: block;
+    display: none;
+}
+.detail_page .target_img {
+    position: absolute;
+    top: 120px;
+    left: 50px;
+    width: 96px;
+    height: auto;
+    border: 1px solid #3498DB;
 }
 
 .detail_page .camera_container {
@@ -372,7 +422,7 @@ body {
 }
 
 .camera_wrap_detail .cameraid {
-    width: 64px;
+    width: 70px;
     height: 30px;
     line-height: 30px;
     
@@ -554,7 +604,7 @@ body {
     height: 14px;
     position: absolute;
     top: 7px;
-    left: -6px;
+    left: -8px;
     border: 1px solid #9DDFF7;
     border-radius: 14px;
     background: #F1FAFF;
@@ -565,7 +615,7 @@ body {
     height: 10px;
     position: absolute;
     top: 6px;
-    left: -4px;
+    left: -6px;
     border: 1px solid #9DDFF7;
     border-radius: 14px;
     background: #F1FAFF;
@@ -618,6 +668,11 @@ body {
     height: 21px;
     display: none;
 }
+
+.tips_detail .anly_block {
+    display: none;
+}
+
 .tips_detail .capture {
     display: block;
 }
@@ -626,10 +681,7 @@ body {
 }
 
 .tips_detail .anly_block *,
-.tips_detail .capture * {
-    position: absolute;
-    top: 0;
-}
+.tips_detail .capture *,
 .tips_small .anly_block *,
 .tips_small .capture * {
     position: absolute;
@@ -651,11 +703,14 @@ body {
     text-align: center;
     line-height: 36px;
     color: rgb(236, 240, 241);
-    font-size: 36px;
-    letter-spacing: 2px;
+    font-size: 24px;
+    /*letter-spacing: 10px;*/
     
     background: rgba(231, 76, 60, 0.8);
-    font-family: 'Futura Bold BT';
+    font-family: 'SimHei', 'Microsoft YaHei';
+    display: block;
+    
+    transition: color 1s, background 1s;
 }
 .tips_detail .capture .capt {
     cursor: pointer;
@@ -668,10 +723,10 @@ body {
     line-height: 21px;
     color: rgb(236, 240, 241);
     font-size: 18px;
-    letter-spacing: 2px;
+    /*letter-spacing: 2px;*/
     cursor: pointer;
     background: rgba(231, 76, 60, 0.8);
-    font-family: 'Futura Bold BT';
+    font-family: 'SimHei', 'Microsoft YaHei';
 }
 
 .tips_small.tips_1 {

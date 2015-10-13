@@ -1,18 +1,11 @@
+// SLIDE & TRANSCOLOR are for animate 
 var SLIDE;
 var TRANSCOLOR;
 var ROOT = 'http://10.250.94.25:5000';
 var FPS = 30;
-var POS = [
-    {
-        "index": 3,
-        "frame_pos": 300
-    },
-    {
-        "index": 3,
-        "frame_pos": 600
-    }
-]
+var POS = [];
 
+var CURR_TARGET = 0;
 
 function changeWidth(container, width, num) {
     $(container).css({
@@ -20,10 +13,13 @@ function changeWidth(container, width, num) {
     })
 }
 function slideAnalyzing(anly) {
-    console.log(anly)
-    var canvas = anly.get(0);
-    ctx = canvas.getContext('2d');
+    console.log(anly);
     
+    anly.css({dispaly: 'block'});
+    
+    var canvas = anly.get(0);
+    var ctx = canvas.getContext('2d');
+        
     var img = new Image();
     img.src = './imgs/analyzing.png';
     
@@ -34,6 +30,13 @@ function slideAnalyzing(anly) {
     k_right.src = './imgs/k_right.png';
     
     img.onload = function() {
+        ctx.fillStyle = 'rgba(231, 76, 60, 0.8)';
+        // ctx.fillRect(6, 4, 315, 36);
+        // ctx.font = "24px SimHei";
+        // //设置字体填充颜色
+        // ctx.fillStyle = 'rgb(236, 240, 241)';
+        // //从坐标点(50,50)开始绘制文字
+        // ctx.fillText("分 析 中", 113, 32);
         ctx.drawImage(img, 6, 4);
         ctx.drawImage(k_left, 0, 0);
         ctx.drawImage(k_right, 316, 0)
@@ -54,6 +57,12 @@ function slideAnalyzing(anly) {
     function slideOut() {
         ctx.clearRect(0, 0, width, height);
         
+        // ctx.fillStyle = 'rgba(231, 76, 60, 0.8)';
+        // ctx.fillRect(posX, posY, 315, 36);
+        // //设置字体填充颜色
+        // ctx.fillStyle = 'rgb(236, 240, 241)';
+        // //从坐标点(50,50)开始绘制文字
+        // ctx.fillText("分 析 中", 113, 32);
         ctx.drawImage(img, posX, posY);
         ctx.clearRect(0, 0, w1, height);
         ctx.clearRect(w2, 0, width, height);
@@ -63,6 +72,12 @@ function slideAnalyzing(anly) {
         
         if (w1 < 0) {
             ctx.clearRect(0, 0, width, height);
+            // ctx.fillStyle = 'rgba(231, 76, 60, 0.8)';
+            // ctx.fillRect(posX, posY, 315, 36);
+            // //设置字体填充颜色
+            // ctx.fillStyle = 'rgb(236, 240, 241)';
+            // //从坐标点(50,50)开始绘制文字
+            // ctx.fillText("分 析 中", 113, 32);
             ctx.drawImage(img, posX, posY);
             ctx.drawImage(k_left, 0, 0);
             ctx.drawImage(k_right, 316, 0)
@@ -74,21 +89,29 @@ function slideAnalyzing(anly) {
     }
 }
 
-// setTimeout(slideAnalyzing, 1000);
-
 // setInterval(transColor, 1000);
 
+function startFlash() {
+    $('.analyzing').css({display: 'none'});
+    $('.anly_block').css({display: 'block'});
+    TRANSCOLOR = self.setInterval(transColor, 1000);
+}
+function endFlash() {
+    window.clearInterval(TRANSCOLOR);
+}
+
 function transColor() {
-    $('.anly').animate({
+    $('.anly').css({
         'background-color': 'rgba(236, 240, 241, 0)',
         'color': 'rgba(231, 76, 60, 0.8)'
-    },  500,
-    function () {
-        $('.anly').animate({
-        'background-color': 'rgba(231, 76, 60, 0.8)',
-        'color': 'rgb(236, 240, 241)'
-        }, 500);
-    })
+    });
+    
+    setTimeout(function () {
+        $('.anly').css({
+            'background-color': 'rgba(231, 76, 60, 0.8)',
+            'color': 'rgb(236, 240, 241)'
+        });
+    }, 500)
 }
 
 function bindTargetSwitchEvent(curr, max, min, interval) {
@@ -96,26 +119,50 @@ function bindTargetSwitchEvent(curr, max, min, interval) {
     var maxDeg = max;
     var minDeg = min + interval;
     
+    // init switch
+    transform($('#container').get(0), "rotateY(" + currDeg + "deg)");
+    
+    // before bind, need unbind ex-bind
+    $('.left_turn').unbind('click');
+    $('.right_turn').unbind('click');
+    
     $('.left_turn').bind('click', function (evevt) {
-        // console.log('left')
-        if (currDeg >= maxDeg) return;
-        currDeg += interval;
-        transform($('#container')[0], "rotateY(" + currDeg + "deg)");
-        
         // stop the bubbling event
         event.stopPropagation();
-    })
+        
+        if (currDeg >= maxDeg) return;
+        
+        // TODO 
+        CURR_TARGET--;
+        console.log(CURR_TARGET);
+        
+        currDeg += interval;
+        transform($('#container').get(0), "rotateY(" + currDeg + "deg)");
+    });
     
     $('.right_turn').bind('click', function (event) {
-        // console.log('right')
-        if (currDeg <= minDeg) return;
-        currDeg -= interval;
-        transform($('#container')[0], "rotateY(" + currDeg + "deg)");
-        
         // stop the bubbling event
         event.stopPropagation();
-    })
+        
+        if (currDeg <= minDeg) return;
+        // TODO
+        CURR_TARGET++;
+        console.log(CURR_TARGET);
+        
+        currDeg -= interval;
+        transform($('#container').get(0), "rotateY(" + currDeg + "deg)");
+    });
 }
+// bind cancle choose target
+$('.choose_target').bind('click', function () {
+    // hidden the choose page
+    $('.confirm_box').css({display: 'none'});
+    $(this).css({display: 'none'});
+    
+    // could re-choose a target
+    $('.anly_block').css({display: 'none'});
+    $('.capture').css({display: 'block'});
+})
 
 var transform = function (element, value, key)  
 {  
@@ -218,49 +265,25 @@ function switchResultWindow(currWindow) {
     });
     console.log($(windowClassName))
 }
-
-
-//反射調用
-var invokeFieldOrMethod = function(element, method) 
-{
-   var usablePrefixMethod;
-   ["webkit", "moz", "ms", "o", ""].forEach(function(prefix) {
-       if (usablePrefixMethod) return;
-       if (prefix === "") {
-           // 无前缀，方法首字母小写
-           method = method.slice(0,1).toLowerCase() + method.slice(1);   
-       }
-       var typePrefixMethod = typeof element[prefix + method];
-       if (typePrefixMethod + "" !== "undefined") {
-           if (typePrefixMethod === "function") {
-               usablePrefixMethod = element[prefix + method]();
-           } else {
-               usablePrefixMethod = element[prefix + method];
-           }
-       }
-   });
     
-       return usablePrefixMethod;
-};
-    
-//進入全屏
- function launchFullscreen(element) 
-   {
-    //此方法不可以在異步任務中執行，否則火狐無法全屏
-     if(element.requestFullscreen) {
-       element.requestFullscreen();
-     } else if(element.mozRequestFullScreen) {
-       element.mozRequestFullScreen();
-     } else if(element.msRequestFullscreen){ 
-       element.msRequestFullscreen();  
-     } else if(element.oRequestFullscreen){
+// enter fullscreen
+function launchFullscreen(element) {
+    if(element.requestFullscreen) {
+        element.requestFullscreen();
+    } 
+    else if(element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+    } 
+    else if(element.msRequestFullscreen){ 
+        element.msRequestFullscreen();  
+    } 
+    else if(element.oRequestFullscreen){
         element.oRequestFullscreen();
     }
-    else if(element.webkitRequestFullscreen)
-     {
-       element.webkitRequestFullScreen();
-     }else{
-      
+    else if(element.webkitRequestFullscreen) {
+        element.webkitRequestFullScreen();
+    }
+    else {
         var docHtml  = document.documentElement;
         var docBody  = document.body;
         var videobox  = document.getElementById('videobox');
@@ -269,23 +292,26 @@ var invokeFieldOrMethod = function(element, method)
         docBody.style.cssText = cssText;
         videobox.style.cssText = cssText+';'+'margin:0px;padding:0px;';
         document.IsFullScreen = true;
- 
-      }
-   }
-//退出全屏
-   function exitFullscreen()
-   {
-       if (document.exitFullscreen) {
-         document.exitFullscreen();
-       } else if (document.msExitFullscreen) {
-         document.msExitFullscreen();
-       } else if (document.mozCancelFullScreen) {
-         document.mozCancelFullScreen();
-       } else if(document.oRequestFullscreen){
-            document.oCancelFullScreen();
-        }else if (document.webkitExitFullscreen){
-         document.webkitExitFullscreen();
-       }else{
+    }
+}
+// exist full screen
+function exitFullscreen() {
+    if (document.exitFullscreen) {
+        document.exitFullscreen();
+    } 
+    else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+    } 
+    else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+    } 
+    else if(document.oRequestFullscreen){
+        document.oCancelFullScreen();
+    } 
+    else if (document.webkitExitFullscreen){
+        document.webkitExitFullscreen();
+    } 
+    else{
         var docHtml  = document.documentElement;
         var docBody  = document.body;
         var videobox  = document.getElementById('videobox');
@@ -294,25 +320,8 @@ var invokeFieldOrMethod = function(element, method)
         videobox.style.cssText = "";
         document.IsFullScreen = false;
     }
-  }
+}
   
-// document.getElementById('fullScreenBtn').addEventListener('click',function(){
-//     launchFullscreen(document.getElementById('video')); 
-//     window.setTimeout(function exit(){
-//     //檢查瀏覽器是否處於全屏
-//     if(invokeFieldOrMethod(document,'FullScreen') || invokeFieldOrMethod(document,'IsFullScreen') || document.IsFullScreen)
-//     {
-//     exitFullscreen();
-//     }
-//    },5*1000);
-// },false);
-
-// 启动全屏!
-// $('body').click(function (){
-//     launchFullscreen(document.getElementById('aa')); // 整个网页
-// })
-
-
 // listner to video
 $('.play_pause').bind('click', function () {
     var video = $(this).parent().parent().children('video');
@@ -354,7 +363,6 @@ $('.process_area').bind('click', function (event) {
     $(this).siblings('.track_point').css({left: x - 8});
     
     // refresh time
-    console.log($(this).parent().parent().prev().get(0))
     var tolTime = $(this).parent().parent().prev().get(0).duration;
     var tolProcessWidth = $(this).parent().children('.tol_process').width();
     $(this).parent().parent().prev().get(0).currentTime = (x / tolProcessWidth) * tolTime;
@@ -364,33 +372,35 @@ $('.process_area').bind('click', function (event) {
     console.log(tolProcessWidth);
 })
 
-// process bar
-for (var i = 0; i < $('.html5_video').length; ++i) {
-    $('.html5_video').get(i).addEventListener("timeupdate", function () {
-        var totalTime = this.duration;
-        var tolProcessWidth = $(this).parent().find('.tol_process').width();
-        
-        var curProcess = (this.currentTime / totalTime) * tolProcessWidth;
-        
-        // change the style
-        $(this).parent().find('.curr_process').css({width: curProcess});
-        $(this).parent().find('.track_point').css({left: curProcess - 8});
-        
-        if (curProcess == tolProcessWidth) {
-            console.log('a')
-            $(this).parent().find('.play_pause').addClass('pause');
-            $(this).parent().find('.play_pause').removeClass('play');
-        }
-    }, false);
-}
+// bind process bar
+$('.html5_video').bind("timeupdate", function () {
+    var totalTime = this.duration;
+    var tolProcessWidth = $(this).parent().find('.tol_process').width();
+    
+    var curProcess = (this.currentTime / totalTime) * tolProcessWidth;
+    
+    // change the progress bar style
+    $(this).parent().find('.curr_process').css({width: curProcess});
+    $(this).parent().find('.track_point').css({left: curProcess - 8});
+    
+    if (curProcess == tolProcessWidth) {
+        console.log('a')
+        $(this).parent().find('.play_pause').addClass('pause');
+        $(this).parent().find('.play_pause').removeClass('play');
+    }
+    
+    // change the current time
+    var currTime = $(this).parent().find('.curr_time');
+    var startTime = currTime.attr('class').split('start_time')[1];
+    var startSecond = timeToSecond(startTime);
+    var currSecond = startSecond + this.currentTime;
+    currTime.html(secondToTime(currSecond));
+});
 
 
 function switchDetailCamera(allCam, currCam) {
     
-    // TODO
-    handleResult(RESULT);
-    
-    
+    // TODO     
     
     // when touch again, return
     if (currCam.hasClass('camera_wrap_detail')) return;
@@ -425,11 +435,6 @@ function switchDetailCamera(allCam, currCam) {
     $(currCam.parent().find('.tips')[i - 1]).css({display: 'block'});
     console.log($(currCam.parent().find('.tips')[i - 1]));
     
-    // ["1", "2", "3", "4"].forEach(function (index)  
-    // {  
-    //     currCam.parent().find('.tips').removeClass('tips_' + index);
-    // });
-    
     // band swiper
     var swiper = new Swiper('.swiper-container', {
         scrollbar: '.swiper-scrollbar',
@@ -440,7 +445,10 @@ function switchDetailCamera(allCam, currCam) {
         grabCursor: true
     });
     
+    // repaint process track with result
     paintProgressTrack(POS);
+    
+    slideAnalyzing($('.analyzing'));
 }
 
 $('.html5_video').bind('click', function () {
@@ -454,30 +462,8 @@ $('.html5_video').bind('click', function () {
 $('.capture').bind('click', function () {
     captureTarget($(this).parent());
 })
+    
 
-function captureTarget(currWindow) {
-    
-    var cArry = currWindow.attr('class').split(' ');
-    var iArry = cArry[1].split('_');
-    var index = iArry[1];
-    
-    // switch to detail page
-    var currClass = '.camera_wrap_' + index;
-    var currWrap = $(currClass);
-    
-    // switch to DerailCamera
-    switchDetailCamera($('.camera_wrap'), currWrap);
-    
-    // stop the video
-    currWrap.find('.html5_video').trigger('pause');
-    currWrap.find('.play_pause').addClass('pause');
-    currWrap.find('.play_pause').removeClass('play');
-    
-    // upload a imge with target
-    // uploadImg(currWrap.find('.html5_video'));
-    // change method, post the frame position
-    submiteFramePosition($(currWrap).find('.html5_video'));
-}
 
 function initHistoryListLayout () {
     // video wrap style
@@ -487,24 +473,16 @@ function initHistoryListLayout () {
     cameraWrap.css({display: 'block'});
     
     // tips style
-    var tips = $('.tips')
+    var tips = $('.tips');
     tips.removeClass('tips_detail');
     tips.addClass('tips_small');
     tips.css({display: 'block'});
-    
-    // abslute position
-    // ["1", "2", "3", "4"].forEach(function (index) {
-    //     var c1 = 'camera_wrap_' + index;
-    //     $(cameraWrap[index - 1]).addClass(c1);
-    //     
-    //     var c2 = 'tips_' + index;
-    //     $(tips[index - 1]).addClass(c2);
-    // });
     
     // hidden result windows, add camera container width
     $('.result_container').css({display: 'none'});
     $('.camera_container').css({height: '954px'});
     
+    // repaint progress tarack
     paintProgressTrack(POS);
 }
 initHistoryListLayout();
@@ -555,162 +533,44 @@ var PERONSHOT = {
     ]
 }
 
-// For get all target in this frame
-function submiteFramePosition(video) {
-    var v = video.get(0);
-    
-    var currTime = v.currentTime;
-    var framePos = Math.floor(currTime * FPS);
-    
-    var vId = video.attr('class').split(' ')[1];
-    
-    var url = ROOT + '/api/gee/personshots/vid:' + vId + '/' + framePos;
-    
-    // sent request
-    // $.ajax({
-    //     type: 'GET',
-    //     url: url
-    // })
-    // .done(function (res) {
-    //     console.log(res);
-    // })
-    
-    // change the style
-    var cArry = video.parent().attr('class').split(' ')[1];
-    // console.log(video.attr('class').split(' '))
-    var index = cArry.split('_')[2];
-    
-    var tipClass = '.tips_' + index;
-    // $(tipClass).find('.anly_block').css({display: 'block'});
-    $(tipClass).find('.analyzing').css({display: 'block'});
-    $(tipClass).find('.capture').css({display: 'none'});
-    
-    slideAnalyzing($(tipClass).find('.analyzing'));
-
-    
-    setTimeout(function () {
-        showTheTarget($('#container'), PERONSHOT);
-    }, 3000);
-    
-}
-
-function showTheTarget(container, res) {
-    var path = res.entrance;
-    var count = res.count;
-    var targets = res.targets;
-    
-    $('.choose_target').css({display: 'block'});
-    
-    for (var i = 0; i < count; ++i) {
-        var liNode = $('<li class="one"></li>');
-        liNode.addClass(targets[i].id);
-        var img = $('<img >');
-        
-        img.attr('src', path + targets[i].filename);
-        liNode.append(img);
-        
-        // push the node to container
-        container.append(liNode);
-    }
-    
-    // add lisentner to left & right event
-    bindTargetSwitchEvent(0, 0, -count * 30, 30);
-    // bind the new a new event
-    $('.one').bind('click', function () {
-        console.log('a')
-        var target = $(this);
-        
-        $('.confirm_box').css({display: 'block'});
-        
-        $('.cancel').bind('click', function () {
-            $('.confirm_box').css({display: 'none'});
-        })
-        $('.confirm').bind('click', function () {
-            console.log('b')
-            submiteTarget(target);
-        })
-        
-    });
-}
-
-
-
-function submiteTarget(tarNode) {
-    var personShotId = tarNode.attr('class').split(' ')[1];
-    
-    console.log(personShotId);
-    
-    // change the style
-    $('.choose_target').css({display: 'none'});
-    
-    // the MASK 
-    $('.mask').css({display: 'block'});
-    // change The Style
-    $('.analyzing').css({display: 'none'});
-    $('.anly_block').css({display: 'block'});
-    TRANSCOLOR = self.setInterval(transColor, 1000);
-    // $.ajax({
-    //     type: 'GET',
-    //     url: ROOT + '/api/gee/personshots/' + personShotId
-    // })
-    // .done(function (res) {
-    //     console.log(res);
-    // })
-    setTimeout(function () {
-        window.clearInterval(TRANSCOLOR);
-        $('.mask').css({display: 'none'});
-        $('.tips').css({display: 'none'});
-    }, 3000)
-}
-
-function getHistoryVideoList(data) {
-    var d = data;
-    var url = ROOT + '/api/gee/videoshots/date:' + d;
-    $.ajax({
-        type: 'GET',
-        url: url
-         
-    })
-    .done(function (res) {
-        console.log(res);
-        loadVideo(res);
-    })
-}
-// getHistoryVideoList('20131801');
-
-
-function loadVideo(res) {
-    var path = res.entrance;
-    var targets = res.targets;
-    
-    var videoList = $('.html5_video');
-    for (var i = 0; i < res.count; ++i) {
-        console.log(targets[i].id);
-        // $(videoList[i]).addClass(targets[i].id);
-        $(videoList[i]).attr('src', path + targets[i].filename);
-    }
-}
-
-
-var RES = {
+var VIDEOLIST = {
     "entrance": 'C:\\Users\\boby\\Desktop\\video\\',
     "count": 4,
     "targets": [
         {
-            "id": 'WP_20151006_20_18_45_Pro.mp4'
+            "id": 'WP_20151006_20_18_45_Pro.mp4',
+            "filename": 'WP_20151006_20_18_45_Pro.mp4',
+            "time_range": {
+                "start": "2015-10-10 00:10:00",
+                "end": "2015-10-10 01:10:10"
+            },
         },
         {
-            "id": 'WP_20151006_20_19_44_Pro.mp4'
+            "id": 'WP_20151006_20_19_44_Pro.mp4',
+            "filename": 'WP_20151006_20_19_44_Pro.mp4',
+            "time_range": {
+                "start": "2015-10-10 02:10:00",
+                "end": "2015-10-10 03:10:10"
+            },
         },
         {
-            "id": 'WP_20151006_20_21_14_Pro.mp4'
+            "id": 'WP_20151006_20_21_14_Pro.mp4',
+            "filename": 'WP_20151006_20_21_14_Pro.mp4',
+            "time_range": {
+                "start": "2015-10-10 04:10:00",
+                "end": "2015-10-10 05:10:10"
+            },
         },
         {
-            "id": 'WP_20151006_20_21_54_Pro.mp4'
+            "id": 'WP_20151006_20_21_54_Pro.mp4',
+            "filename": 'WP_20151006_20_21_54_Pro.mp4',
+            "time_range": {
+                "start": "2015-10-10 06:10:00",
+                "end": "2015-10-10 06:10:10"
+            },
         }
     ]
 }
-// loadVideo(RES);
 
 var RESULT = {
     "entrance": "./imgs/",
@@ -776,65 +636,6 @@ var RESULT = {
     ]
 }
 
-function handleResult(res) {
-    var path = res.entrance;
-    var count = res.count;
-    var targets = res.targets;
-    var progressPos = [];
-    
-    var rate = 186 / 720;
-    
-    for (var i = 0; i < count; ++i) {
-        // create a node
-        var resultItem = $('<div class="result_item swiper-slide"></div>');
-        var resultImg = $('<img class="result_img">');
-        var resultMask = document.createElement('canvas');
-        $(resultMask).addClass('result_mask');
-        
-        // store the frame inf and camera inf
-        $(resultItem).addClass('frame' + targets[i].frame_pos);
-        $(resultItem).addClass('index' + targets[i].camera.index);
-        var tempPos = {
-            "index": targets[i].camera.index,
-            "frame_pos": targets[i].frame_pos
-        }
-        progressPos.push(tempPos);
-        
-        // add url to img
-        resultImg.attr('src', path + targets[i].filename);
-        // paint
-        var rect = targets[i].rect.split(' ');
-        paintCanvasMask(resultMask, parseInt(rect[0])*rate, parseInt(rect[1])*rate,
-                        parseInt(rect[2])*rate, parseInt(rect[3])*rate);
-                        
-        resultItem.append($(resultMask));
-        resultItem.append(resultImg);
-                
-        // append to all
-        $('.result_window_0').find('.result_list').append(resultItem);
-        
-        // need to repaint
-        var copyResult = resultItem.get(0).cloneNode(true);
-        var cMask = $(copyResult).find('canvas').get(0);
-        paintCanvasMask(cMask, parseInt(rect[0])*rate, parseInt(rect[1])*rate,
-                        parseInt(rect[2])*rate, parseInt(rect[3])*rate);
-
-        // append to map
-        var index = targets[i].camera.index;
-        var resultClass = '.result_window_' + index;
-        $(resultClass).find('.result_list').append(copyResult);
-        
-        // bind progress bar
-        resultItem.bind('click', function () {
-            jumpVideoPos($(this));
-        });
-        $(copyResult).bind('click', function () {
-            jumpVideoPos($(this));
-        })
-    }
-    
-    console.log(progressPos);
-}
 
 function jumpVideoPos(currResult) {
     var cArry = currResult.attr('class');
@@ -861,11 +662,6 @@ function paintCanvasMask(canvas, posX, posY, width, height) {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.clearRect(posX, posY, width, height);
 }
-
-
-// setTimeout(function () {
-//     paintProgressTrack(POS);
-// }, 1000)
 
 function paintProgressTrack(pos) {
     // before paint, clear all
@@ -930,13 +726,305 @@ function paintOneTrack(canvas, posX, posY, radius) {
     
     ctx.fillStyle = 'rgba(231, 76, 60, 0.8)'
     ctx.fillRect(0, 65, 100, 23)
-    // ctx.beginPath();
-    // ctx.moveTo(posX, posY);
-    // ctx.arc(posX, 78, 20, 0, Math.PI * 2, true);
-    // ctx.closePath();
     ctx.fill();
 }
 
-setTimeout(function () {
-    // loadVideo(RES);
-}, 3000)
+
+// Step 1, request history video list
+getHistoryVideoList('20131801');
+function getHistoryVideoList(data) {
+    var d = data;
+    var url = ROOT + '/api/gee/videoshots/date:' + d;
+    $.ajax({
+        type: 'GET',
+        url: url
+    })
+    .done(function (res) {
+        console.log(res);
+        loadVideo(res);
+    });
+}
+
+// loadVideo(VIDEOLIST);
+// Step 2, load video on the list
+function loadVideo(res) {
+    var path = res.entrance;
+    var targets = res.targets;
+    
+    var videoList = $('.html5_video');
+    for (var i = 0; i < res.count; ++i) {
+        // load video fisrt
+        console.log(targets[i].id);
+        $(videoList[i]).addClass(targets[i].id);
+        $(videoList[i]).attr('src', path + targets[i].filename);
+        
+        // change the camera data
+        var startTime = targets[i].time_range.start_time.split(' ')[1];
+        var endTime = targets[i].time_range.end_time.split(' ')[1];
+        
+        // record the start_time and end_time
+        $(videoList[i]).parent().find('.curr_time').html(startTime);
+        $(videoList[i]).parent().find('.end_time').html(endTime);
+        $(videoList[i]).parent().find('.curr_time').addClass('start_time' + startTime);
+    }
+}
+
+// Step 3, capture the target image
+function captureTarget(currWindow) {
+    
+    var cArry = currWindow.attr('class').split(' ');
+    var iArry = cArry[1].split('_');
+    var index = iArry[1];
+    
+    // switch to detail page
+    var currClass = '.camera_wrap_' + index;
+    var currWrap = $(currClass);
+    
+    // switch to DerailCamera
+    switchDetailCamera($('.camera_wrap'), currWrap);
+    
+    // stop the video
+    currWrap.find('.html5_video').trigger('pause');
+    currWrap.find('.play_pause').addClass('pause');
+    currWrap.find('.play_pause').removeClass('play');
+    
+    // upload a frame of image
+    submitFramePosition($(currWrap).find('.html5_video'));
+}
+
+// Step 4, request target person list, For getting all target in this frame
+function submitFramePosition(video) {
+    var v = video.get(0);
+    
+    var currTime = v.currentTime;
+    var framePos = Math.floor(currTime * FPS);
+    
+    var vId = video.attr('class').split(' ')[1];
+    
+    var url = ROOT + '/api/gee/personshots/' + vId + '/' + framePos;
+    
+    // change the style
+    var cArry = video.parent().attr('class').split(' ')[1];
+    // console.log(video.attr('class').split(' '))
+    var index = cArry.split('_')[2];
+    
+    var tipClass = '.tips_' + index;
+    // $(tipClass).find('.anly_block').css({display: 'block'});
+    $(tipClass).find('.analyzing').css({display: 'block'});
+    $(tipClass).find('.capture').css({display: 'none'});
+    
+    // animate
+    slideAnalyzing($(tipClass).find('.analyzing'));
+
+    setTimeout(startFlash, 700);
+
+    // sent request
+    $.ajax({
+        type: 'GET',
+        url: url
+    })
+    .done(function (res) {
+        // end flash
+        endFlash();
+        showTheTarget($('#container'), res);
+    });
+}
+
+// Step 5, show all target in this frame 
+function showTheTarget(container, res) {
+    var path = res.entrance;
+    var count = res.count;
+    var targets = res.targets;
+    
+    // show choose target page
+    $('.choose_target').css({display: 'block'});
+    // clear history record
+    $('.choose_target').find('#container').empty();
+    
+    for (var i = 0; i < count; ++i) {
+        var liNode = $('<li class="one"></li>');
+        liNode.addClass(targets[i].id);
+        var img = $('<img >');
+        
+        img.attr('src', path + targets[i].filename);
+        liNode.append(img);
+        img.addClass(targets[i].id);
+        
+        // push the node to container
+        container.append(liNode);
+    }
+    
+    // init current target's  pos
+    CURR_TARGET = Math.floor(count / 2);
+    // add lisentner to left & right event
+    bindTargetSwitchEvent(-Math.floor(count / 2) * 30, 0, -count * 30, 30);
+    
+    // before bind event, need to unbind ex-bind
+    $('.one').unbind('click');
+    // bind the new a new event
+    $('.one').bind('click', function (event) {
+        event.stopPropagation();
+        
+        var target = $(this);
+        // console.log(target);
+        // console.log($('#container').css('transform'));
+        console.log(CURR_TARGET);
+        $('.confirm_box').css({display: 'block'});
+        
+        // before bind event, need to unbind ex-bind
+        $('.cancel').unbind('click');
+        $('.confirm').unbind('click');
+        $('.target_track').unbind('click');
+        
+        // cancel this capture
+        $('.cancel').bind('click', function (event) {
+            event.stopPropagation();
+            $('.confirm_box').css({display: 'none'});            
+        });
+        // add this target to history research
+        $('.confirm').bind('click', function (event) {
+            event.stopPropagation();
+            submitTarget(target);
+        });
+        // add this target to track
+        $('.target_track').bind('click', function (evevt) {
+            event.stopPropagation();
+            console.log('track');
+            trackTarget(target);            
+        });
+    });
+}
+
+// Step 6, sumbmit target person, search in history
+function submitTarget(target) {
+    
+    var personShotId = target.find('img').attr('class');    
+    
+    console.log(personShotId);
+    
+    // new a target
+    var targetImg = $('<img class="target_img">');
+    targetImg.attr('src', target.find('img').attr('src'));
+    $('.detail_page').append(targetImg);
+    
+    // change the style
+    $('.choose_target').css({display: 'none'});
+    
+    // the MASK 
+    $('.mask').css({display: 'block'});
+    // change The Style
+    $('.analyzing').css({display: 'none'});
+    $('.anly_block').css({display: 'block'});
+    
+    TRANSCOLOR = self.setInterval(transColor, 1000);
+    
+    // $.ajax({
+    //     type: 'GET',
+    //     url: ROOT + '/api/gee/personshots/' + personShotId
+    // })
+    // .done(function (res) {
+    //     // change the style
+    //     window.clearInterval(TRANSCOLOR);
+    //     $('.mask').css({display: 'none'});
+    //     $('.tips').css({display: 'none'});
+    //     
+    //     // handle result
+    //     handleResult(res);
+    // });
+}
+
+// Step 6, track target person, track in real-time monitor
+function trackTarget(target) {
+    // a new target
+    var oneTarget = $('<div class="one_track_target"></div>');
+    var targetImg = $('<img class="one_track_img">');
+    targetImg.attr('src', target.find('img').attr('src'));
+    // console.log(target.attr('src'));
+    oneTarget.append(targetImg);
+    
+    // push to track target list
+    $('.track_target_list').append(oneTarget);
+    
+    // switch function to real-time monitor
+    switchFunction($('.realtime_fun'));
+
+    targetImg.css({
+        height: '144px'
+    });
+    targetImg.animate({
+        height: '80px'
+    }, 200);
+    
+    targetImg.hover( function () {
+        $(this).css({
+            height: '144px'
+        })
+    }, function () {
+        $(this).css({
+            height: '80px'
+        })
+    })
+    
+}
+
+// Step 7, handle all result
+function handleResult(res) {
+    var path = res.entrance;
+    var count = res.count;
+    var targets = res.targets;
+    POS = [];
+    
+    var rate = 186 / 720;
+    
+    for (var i = 0; i < count; ++i) {
+        // create a node
+        var resultItem = $('<div class="result_item swiper-slide"></div>');
+        var resultImg = $('<img class="result_img">');
+        var resultMask = document.createElement('canvas');
+        $(resultMask).addClass('result_mask');
+        
+        // store the frame inf and camera inf
+        $(resultItem).addClass('frame' + targets[i].frame_pos);
+        $(resultItem).addClass('index' + targets[i].camera.index);
+        var tempPos = {
+            "index": targets[i].camera.index,
+            "frame_pos": targets[i].frame_pos
+        }
+        POS.push(tempPos);
+        
+        // add url to img
+        resultImg.attr('src', path + targets[i].filename);
+        // paint
+        var rect = targets[i].rect.split(' ');
+        paintCanvasMask(resultMask, parseInt(rect[0])*rate, parseInt(rect[1])*rate,
+                        parseInt(rect[2])*rate, parseInt(rect[3])*rate);
+                        
+        resultItem.append($(resultMask));
+        resultItem.append(resultImg);
+                
+        // append to all
+        $('.result_window_0').find('.result_list').append(resultItem);
+        
+        // need to repaint
+        var copyResult = resultItem.get(0).cloneNode(true);
+        var cMask = $(copyResult).find('canvas').get(0);
+        paintCanvasMask(cMask, parseInt(rect[0])*rate, parseInt(rect[1])*rate,
+                        parseInt(rect[2])*rate, parseInt(rect[3])*rate);
+
+        // append to map
+        var index = targets[i].camera.index;
+        var resultClass = '.result_window_' + index;
+        $(resultClass).find('.result_list').append(copyResult);
+        
+        // bind progress bar
+        resultItem.bind('click', function () {
+            jumpVideoPos($(this));
+        });
+        $(copyResult).bind('click', function () {
+            jumpVideoPos($(this));
+        })
+    }
+    
+    // paint the process trace
+    paintProgressTrack(POS);
+}
