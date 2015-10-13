@@ -6,11 +6,13 @@
         
         <script src="./js/jquery-2.1.4.min.js"></script>
         <script src="./js/jquery.color.js"></script>
+        <script src="./js/function.js"></script>
     </head>
     <body>
         <div class="choose_target">
             <div class="confirm_box">
-                <button class="confirm">确认</button>
+                <button class="target_track">追踪</button>
+                <button class="confirm">搜索</button>
                 <button class="cancel">取消</button>
             </div>
             <div class="left_turn"></div>
@@ -56,7 +58,7 @@
                     <div class="onemonitor">
                         <video src="C:\Users\boby\Desktop\video\WP_20151002_10_06_55_Pro.mp4" class="html5_realmonitor"></video>
                         <div class="real_tooltip">
-                            <div class="controllor monitorid">ID: 001</div>
+                            <div class="controllor monitorid">ID: 002</div>
                             <div class="controllor monitor_statu"></div>
                             <div class="controllor monitor_capture">CAPTURE</div>
                             <div class="controllor monitor_mixum"></div>
@@ -66,7 +68,7 @@
                     <div class="onemonitor">
                         <video src="C:\Users\boby\Desktop\video\WP_20151002_10_06_55_Pro.mp4" class="html5_realmonitor"></video>
                         <div class="real_tooltip">
-                            <div class="controllor monitorid">ID: 001</div>
+                            <div class="controllor monitorid">ID: 003</div>
                             <div class="controllor monitor_statu"></div>
                             <div class="controllor monitor_capture">CAPTURE</div>
                             <div class="controllor monitor_mixum"></div>
@@ -76,7 +78,7 @@
                     <div class="onemonitor">
                         <video src="C:\Users\boby\Desktop\video\WP_20151002_10_06_55_Pro.mp4" class="html5_realmonitor"></video>
                         <div class="real_tooltip">
-                            <div class="controllor monitorid">ID: 001</div>
+                            <div class="controllor monitorid">ID: 004</div>
                             <div class="controllor monitor_statu"></div>
                             <div class="controllor monitor_capture">CAPTURE</div>
                             <div class="controllor monitor_mixum"></div>
@@ -84,9 +86,22 @@
                         </div>
                     </div>
                 </div>
+                
+                <div class="track_target_container">
+                    <div class="track_target_head">追踪目标</div>
+                    <div class="track_target_list">
+                        <!--<div class="one_track_target"><img src="./imgs/target_1.bmp" alt="" class="one_track_img"></div>
+                        <div class="one_track_target"><img src="./imgs/target_2.bmp" alt="" class="one_track_img"></div>
+                        <div class="one_track_target"><img src="./imgs/target_3.bmp" alt="" class="one_track_img"></div>
+                        <div class="one_track_target"><img src="./imgs/target_4.bmp" alt="" class="one_track_img"></div>
+                        <div class="one_track_target"><img src="./imgs/target_5.bmp" alt="" class="one_track_img"></div>-->
+                    </div>
+                </div>
             </div>
             
-            <div class ="detail_page">
+            <div class="detail_page">
+                
+                <!--<img src="" alt="" class="target_img">-->
                 
                 <div class="camera_container camera_container_1">
                     
@@ -105,13 +120,17 @@
                                 <div class="process_area"></div>
                             </div>
                             <div class="controllor maxum"></div>
-                            <div class="controllor time">05:33:02 / 12:00:00</div>                            
+                            <div class="controllor time">
+                                <span class="curr_time">00:00:00</span>
+                                <span>/</span> 
+                                <span class="end_time">00:00:00</span>
+                             </div>                            
                         </div>
                     </div>
                     <div class="camera_wrap camera_wrap_2">
                         <video src="C:\Users\boby\Desktop\video\WP_20151002_09_26_38_Pro.mp4" class="html5_video"></video>
                         <div class="tooltip">
-                            <div class="controllor cameraid">ID: 001</div>
+                            <div class="controllor cameraid">ID: 002</div>
                             <div class="controllor play_pause pause"></div>
                             <div class="controllor stop"></div>
                             <div class="controllor speedup"></div>
@@ -123,13 +142,17 @@
                                 <div class="process_area"></div>
                             </div>
                             <div class="controllor maxum"></div>
-                            <div class="controllor time">05:33:02 / 12:00:00</div>                            
+                            <div class="controllor time">
+                                <span class="curr_time">00:00:00</span>
+                                <span>/</span> 
+                                <span class="end_time">00:00:00</span>
+                            </div>                            
                         </div>
                     </div>
                     <div class="camera_wrap camera_wrap_3">
                         <video src="C:\Users\boby\Desktop\video\WP_20151002_09_33_35_Pro.mp4" class="html5_video"></video>
                         <div class="tooltip">
-                            <div class="controllor cameraid">ID: 001</div>
+                            <div class="controllor cameraid">ID: 003</div>
                             <div class="controllor play_pause pause"></div>
                             <div class="controllor stop"></div>
                             <div class="controllor speedup"></div>
@@ -141,13 +164,17 @@
                                 <div class="process_area"></div>
                             </div>
                             <div class="controllor maxum"></div>
-                            <div class="controllor time">05:33:02 / 12:00:00</div>                            
+                            <div class="controllor time">
+                                <span class="curr_time">00:00:00</span>
+                                <span>/</span> 
+                                <span class="end_time">00:00:00</span>
+                            </div>                            
                         </div>
                     </div>
                     <div class="camera_wrap camera_wrap_4">
                         <video src="C:\Users\boby\Desktop\video\WP_20151002_09_36_43_Pro.mp4" class="html5_video"></video>
                         <div class="tooltip">
-                            <div class="controllor cameraid">ID: 001</div>
+                            <div class="controllor cameraid">ID: 004</div>
                             <div class="controllor play_pause pause"></div>
                             <div class="controllor stop"></div>
                             <div class="controllor speedup"></div>
@@ -159,7 +186,11 @@
                                 <div class="process_area"></div>
                             </div>
                             <div class="controllor maxum"></div>
-                            <div class="controllor time">05:33:02 / 12:00:00</div>                            
+                            <div class="controllor time">
+                                <span class="curr_time">00:00:00</span>
+                                <span>/</span> 
+                                <span class="end_time">00:00:00</span>
+                            </div>                            
                         </div>
                     </div>
                     
@@ -167,44 +198,44 @@
                         <canvas class="analyzing" width="327px" height="44px"></canvas>
                         <div class="anly_block">
                             <img src="./imgs/k_left.png" alt="" class="k_left">
-                            <span class="anly">分析中</span>
+                            <span class="anly">分&nbsp;&nbsp;析&nbsp;&nbsp;中</span>
                             <img src="./imgs/k_right.png" alt="" class="k_right">
                         </div>
                         <div class="capture">
-                            <span class="capt">获取</span>
+                            <div class="capt">获&nbsp;&nbsp;取</div>
                         </div>
                     </div>
                     <div class="tips tips_2">
                         <canvas class="analyzing" width="327px" height="44px"></canvas>
                         <div class="anly_block">
                             <img src="./imgs/k_left.png" alt="" class="k_left">
-                            <span class="anly">分析中</span>
+                            <span class="anly">分&nbsp;&nbsp;析&nbsp;&nbsp;中</span>
                             <img src="./imgs/k_right.png" alt="" class="k_right">
                         </div>
                         <div class="capture">
-                            <span class="capt">获取</span>
+                            <div class="capt">获&nbsp;&nbsp;取</div>
                         </div>
                     </div>
                     <div class="tips tips_3">
                         <canvas class="analyzing" width="327px" height="44px"></canvas>
                         <div class="anly_block">
                             <img src="./imgs/k_left.png" alt="" class="k_left">
-                            <span class="anly">分析中</span>
+                            <span class="anly">分&nbsp;&nbsp;析&nbsp;&nbsp;中</span>
                             <img src="./imgs/k_right.png" alt="" class="k_right">
                         </div>
-                        <div class="capture">
-                            <span class="capt">获取</span>
+                        <div class="capture"> 
+                            <div class="capt">获&nbsp;&nbsp;取</div>
                         </div>
                     </div>
                     <div class="tips tips_4">
                         <canvas class="analyzing" width="327px" height="44px"></canvas>
                         <div class="anly_block">
                             <img src="./imgs/k_left.png" alt="" class="k_left">
-                            <span class="anly">分析中</span>
+                            <span class="anly">分&nbsp;&nbsp;析&nbsp;&nbsp;中</span>
                             <img src="./imgs/k_right.png" alt="" class="k_right">
                         </div>
                         <div class="capture">
-                            <span class="capt">获取</span>
+                            <div class="capt">获&nbsp;&nbsp;取</div>
                         </div>
                     </div>
                     
