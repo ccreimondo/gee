@@ -59,11 +59,11 @@ void VideoStreamHandler(const string &sdp_addr, const IPCamera ip_camera)
     while (1) {
         if (!cap.read(curr_frame)) {
             LogError("Unable to read next frame.");
-            LogError("Exiting");
 
             // if interrupt, release videocacher
             videocacher.release();
-            exit(1);
+
+            throw "unabe to read next frame";
         }
 
         // init some vars for the first frame

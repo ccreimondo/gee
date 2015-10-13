@@ -104,7 +104,8 @@ bool MemCache::save(const VideoShot video_shot)
 
     list<string> vsb_args = {
         video_shot_binary_id,
-        "fullpath", video_shot.get_fullpath(),
+        "filename", video_shot.get_filename(),
+        "path", video_shot.get_path()
     };
 
     // save video shot in redis hash
@@ -133,7 +134,8 @@ bool MemCache::save(const KeyframeShot key_frame_shot)
 
     list<string> kf_args = {
         keyframe_shot_id,
-        "fullpath", key_frame_shot.get_fullpath()
+        "path", key_frame_shot.get_path(),
+        "filename", key_frame_shot.get_filename()
     };
 
     res = redis_sync_.command("HMSET", kf_args);
@@ -141,4 +143,6 @@ bool MemCache::save(const KeyframeShot key_frame_shot)
         LogError(res.toString().c_str());
         exit(1);
     }
+
+    return true;
 }

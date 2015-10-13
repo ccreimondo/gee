@@ -32,7 +32,7 @@ SOURCES += \
     videocacher.cpp \
     videostreamhandler.cpp \
     RBML/getfeature.cpp \
-    galgorithm.cc
+    galgorithm.cpp
 
 HEADERS += \
     sugar.h \

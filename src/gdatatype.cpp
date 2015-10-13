@@ -55,7 +55,7 @@ VideoShot::VideoShot(const string &video_id, const string &cam_id,
     codec_ = codec;
     start_time_ = start_time;
     end_time_ = end_time;
-    cam_id_ = cam_id_;
+    cam_id_ = cam_id;
 
     // temp solution
     filename_ = filename;
