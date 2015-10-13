@@ -210,7 +210,7 @@ def get_gee_video_shot(video_id):
 
 
 @app.route("/api/gee/personshots/<vid>/<frame_pos>/")
-def get_gee_person_shots(vid, frame_pos):
+def get_gee_person_shots_archive(vid, frame_pos):
     res = {
         "entrance": "http://10.250.94.25:5000/static/tmp/person-shots/",
         "count": 0,
@@ -249,19 +249,19 @@ def get_gee_person_shot(vid, frame_pos, pst_id):
 
 
 @app.route("/api/gee/personshots/<person_shot_id>", methods=["GET", "POST"])
-def get_gee_person_shots_archive(person_shot_id):
+def get_gee_person_shots(person_shot_id):
     if request.method == "GET":
         abort(500)
 
     # search person in database with target person shot
     if request.method == "POST":
         res = {
-            "entrance": "http://10.250.94.25:5000/static/keyframes/",
+            "entrance": "http://10.250.94.25:5000/api/gee/personshots/",
             "count": 0,
             "targets": []
         }
-
-    abort(500)
+        # TODO (@Zhiqiang He): make person shots
+        abort(500)
 
 
 @app.route("/api/gee/keyframes/<keyframe_id>")

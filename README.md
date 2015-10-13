@@ -45,7 +45,7 @@ Ex. `/api/gee/videohosts/date:20151010`
 
 ####单个监控的数据
 
-`GET /api/gee/videoshots/<video_id>`
+`GET <entrance><video_id>`
 
 ###人物目标提取
 
@@ -64,7 +64,7 @@ Ex. `/api/gee/videohosts/date:20151010`
 
 ####获取单个人体目标
 
-`GET /api/gee/personshots/<video_id>/<frame_pos>/<person_shot_tmp_id>`
+`GET <entrance>/<video_id>/<frame_pos>/<person_shot_tmp_id>`
 
 ###人体目标识别
 
@@ -97,7 +97,7 @@ Ex. `/api/gee/videohosts/date:20151010`
 
 ###请求关键帧
 
-`GET /api/gee/keyframes/<keyframe_id>`
+`GET <entrance><keyframe_id>`
 
 ###请求监控视频流数据
 

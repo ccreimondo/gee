@@ -9,7 +9,6 @@
 //100 - dimensional feature vector to remove the redundancy of the 
 //high - dimensional feature space.
 //
-#pragma once
 #ifndef GETFEATURE_H
 #define GETFEATURE_H
 
@@ -22,7 +21,7 @@ private:
 	PCA pca;	//use to PCA
 
 private:
-	//creat mask to divided the person image into six horizontal stripes.
+	// create mask to divided the person image into six horizontal stripes.
 	Mat* creatMask(const Mat img)const;
 
 	//For each stripe,extract RGB,HSV,YCbCr,Lab color feature.

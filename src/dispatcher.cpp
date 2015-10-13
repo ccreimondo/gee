@@ -45,10 +45,11 @@ void Dispatcher()
 
     // static videos files for debugging
     vector<string> video_list;
-    video_list.push_back("8_x264.mkv");
-    video_list.push_back("38_720.mp4");
-    video_list.push_back("218_x264_720.mkv");
-    video_list.push_back("220_x264_720.mkv");
+    video_list.push_back("DSC_4557_x264.mkv");
+    // video_list.push_back("8_x264.mkv");
+    // video_list.push_back("38_720.mp4");
+    // video_list.push_back("218_x264_720.mkv");
+    // video_list.push_back("220_x264_720.mkv");
     for (size_t i = 0; i < video_list.size(); ++i) {
         video_stream_addr = kDirPrefix + "example/videos/" + video_list[i];
         string camera_ip("192.168.3.");
