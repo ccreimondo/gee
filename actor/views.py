@@ -20,6 +20,9 @@ REDIS_DB = 0
 # load configuration
 app.config.from_object(__name__)
 
+raw_time_fmt = "%Y%m%d%H%M%S"
+time_fmt = "%Y-%m-%d %H:%M:%S"
+
 
 def connect_redis():
     """Connect to the specific database."""
@@ -67,8 +70,6 @@ def fetch_records_list(date):
     for idx, vid in enumerate(video_shots):
         video_shot = r.hgetall(vid)
         id_f = vid.split(':')[1]
-        raw_time_fmt = "%Y%m%d%H%M%S"
-        time_fmt = "%Y-%m-%d %H:%M:%S"
         start_time = datetime.strptime(video_shot["start_time"], raw_time_fmt)
         end_time = datetime.strptime(video_shot["end_time"], raw_time_fmt)
         time_range_f = {
@@ -115,7 +116,7 @@ def fetch_frame(vid, frame_pos):
         return None
 
     cap = cv2.VideoCapture(video_shot_full_path)
-    cap.set(cv2.CAP_PROP_POS_FRAMES, float(frame_pos))
+    cap.set(cv2.cv.CV_CAP_PROP_POS_FRAMES, float(frame_pos))
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -256,17 +257,49 @@ def get_gee_person_shots(person_shot_id):
     # search person in database with target person shot
     if request.method == "POST":
         res = {
-            "entrance": "http://10.250.94.25:5000/api/gee/personshots/",
+            "entrance": "http://10.250.94.25:5000/api/gee/keyframes/",
             "count": 0,
             "targets": []
         }
-        # TODO (@Zhiqiang He): make person shots
-        abort(500)
+        person_shot_keys = get_redis().keys("ps:*")
+        for idx, person_shot_key in enumerate(person_shot_keys):
+            person_shot = get_redis().hgetall(person_shot_key)
+            try:
+                video_shot_key = "vs:{}{}".format(person_shot["cam_id"],
+                                                  person_shot["video_id"])
+                video_shot = get_redis().hgetall(video_shot_key)
+                start_time = datetime.strptime(video_shot["start_time"], raw_time_fmt)
+                end_time = datetime.strptime(video_shot["end_time"], raw_time_fmt)
+                time_range_f = {
+                    "start_time": start_time.strftime(time_fmt),
+                    "end_time": end_time.strftime(time_fmt)
+                }
+                person_shot_f = {
+                    "id": person_shot_id,
+                    "rect": person_shot["rect"],
+                    "frame": person_shot["frame_id"],
+                    "frame_pos": person_shot["frame_pos"],
+                    "video_shot": {
+                        "fps": video_shot["fps"],
+                        "frames": video_shot["frames"],
+                        "codec": video_shot["codec"],
+                        "format": video_shot["format"],
+                        "time_range": time_range_f
+                    },
+                    "camera": {
+                        "index": idx
+                    }
+                }
+                res["targets"].append(person_shot_f)
+            except KeyError:
+                continue
+        res["count"] = len(res["targets"])
+        return jsonify(res)
 
 
 @app.route("/api/gee/keyframes/<keyframe_id>")
 def get_gee_keyframes(keyframe_id):
-    filename = "{}{}.{}".format("actor/static/keyframes/", keyframe_id, "jpeg")
+    filename = "{}{}.{}".format("static/keyframes/", keyframe_id, "jpeg")
     return send_file(filename, mimetype="image/jpeg")
 
 

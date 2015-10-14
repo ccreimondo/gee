@@ -73,7 +73,6 @@ Ex. `/api/gee/videohosts/date:20151010`
 返回列表中的对象
 ```json
 {
-    "filename": "person_shot_id.jpeg",    
     "id": "person_shot_id",         // reserved
     "rect": "10 10 20 20",
     "frame": "frame_id",            // to fetch picture of frame 
