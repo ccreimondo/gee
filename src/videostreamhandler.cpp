@@ -27,10 +27,10 @@ void VideoStreamHandler(const string &sdp_addr, const IPCamera ip_camera)
     // fill video stream meta
     VideoStreamMeta video_stream_meta;
     // TODO (@Zhiqiang He): meaningful?
-    video_stream_meta.codec = to_string(cap.get(CAP_PROP_FOURCC));
-    video_stream_meta.fps = (size_t)cap.get(CAP_PROP_FPS);
-    video_stream_meta.solution[0] = (int)cap.get(CAP_PROP_FRAME_WIDTH);
-    video_stream_meta.solution[1] = (int)cap.get(CAP_PROP_FRAME_HEIGHT);
+    video_stream_meta.codec = to_string(cap.get(CV_CAP_PROP_FOURCC));
+    video_stream_meta.fps = (size_t)cap.get(CV_CAP_PROP_FPS);
+    video_stream_meta.solution[0] = (int)cap.get(CV_CAP_PROP_FRAME_WIDTH);
+    video_stream_meta.solution[1] = (int)cap.get(CV_CAP_PROP_FRAME_HEIGHT);
 
 #ifndef NOGDEBUG
     cout << "-------------VIDEO STREAM META-----------" << endl;
@@ -43,8 +43,8 @@ void VideoStreamHandler(const string &sdp_addr, const IPCamera ip_camera)
 #endif
 
     // init timestamp
-    double timestamp_before = cap.get(CAP_PROP_POS_MSEC);
-    double timestamp_after = cap.get(CAP_PROP_POS_MSEC);
+    double timestamp_before = cap.get(CV_CAP_PROP_POS_MSEC);
+    double timestamp_after = cap.get(CV_CAP_PROP_POS_MSEC);
 
     // init counter and prepare some vars
     size_t frame_counter = 0;
@@ -67,7 +67,7 @@ void VideoStreamHandler(const string &sdp_addr, const IPCamera ip_camera)
         }
 
         // init some vars for the first frame
-        if (cap.get(CAP_PROP_POS_FRAMES) <= 1) {
+        if (cap.get(CV_CAP_PROP_POS_FRAMES) <= 1) {
             video_id = GetVideoID();
             video_time.time_end = video_time.time_start =
                     GetSysTimeNow();
@@ -78,14 +78,14 @@ void VideoStreamHandler(const string &sdp_addr, const IPCamera ip_camera)
         video_time.time_end = GetSysTimeNow();
 
         // cut per 10mins, 600000ms
-        timestamp_after = cap.get(CAP_PROP_POS_MSEC);
+        timestamp_after = cap.get(CV_CAP_PROP_POS_MSEC);
         if (timestamp_after - timestamp_before >= 600000) {
             // get id and start time for the new video
             video_id = GetVideoID();
             video_time.time_start = GetSysTimeNow();
 
             // update timestamp before
-            timestamp_before = cap.get(CAP_PROP_POS_MSEC);
+            timestamp_before = cap.get(CV_CAP_PROP_POS_MSEC);
             // reset frame counter
             frame_counter = 0;
         }

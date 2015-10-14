@@ -3,6 +3,7 @@
 
 # for app:actor
 mkdir -p log
+mkdir -p /tmp/actor/log
 
 mkdir -p example/videos
 

@@ -4,18 +4,20 @@ CONFIG -= app_bundle
 CONFIG -= qt
 CONFIG += c++11
 
-INCLUDEPATH += /usr/loca/opencv \
-        /usr/local/opencv2/ \
-        /usr/local/boost_1_59_0
+INCLUDEPATH += /usr/include/opencv \
+        /usr/include/opencv2/ \
+        /usr/local/boost_1_59_0 \
+        /usr/include/python2.7
 
-LIBS += -L/usr/local/lib -lpthread \
-        -L/usr/local/lib -lopencv_shape -lopencv_stitching \
+LIBS += -L/usr/lib -lpthread \
+        -L/usr/lib -lopencv_stitching \
         -lopencv_objdetect -lopencv_superres -lopencv_videostab \
         -lopencv_calib3d -lopencv_features2d -lopencv_highgui \
-        -lopencv_videoio -lopencv_imgcodecs -lopencv_video \
+        -lopencv_video \
         -lopencv_photo -lopencv_ml -lopencv_imgproc -lopencv_flann \
-        -lopencv_core -lopencv_hal \
+        -lopencv_core \
         -L/usr/local/boost_1_59_0/lib -lboost_system \
+        -L/usr/lib/python2.7
 
 SOURCES += \
     redisclient/impl/redisasyncclient.cpp \
@@ -31,8 +33,8 @@ SOURCES += \
     gdatatype.cpp \
     videocacher.cpp \
     videostreamhandler.cpp \
+    galgorithm.cpp \
     RBML/getfeature.cpp \
-    galgorithm.cpp
 
 HEADERS += \
     sugar.h \
@@ -50,11 +52,11 @@ HEADERS += \
     gdatatype.h \
     videostreamhandler.h \
     gdebug.h \
-    getfeature.h \
     memcache.h \
     videocacher.h \
-    RBML/getfeature.h \
-    galgorithm.h
+    galgorithm.h \
+    RBML/getfeature.h
 
 OTHER_FILES += \
-    PCA.xml
+    RBML/PCA.xml \
+    pywrapper/Makefile
