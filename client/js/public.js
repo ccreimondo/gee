@@ -653,6 +653,32 @@ var RESULT = {
     ]
 }
 
+// TODO, for realtime
+function playTogether(videoList) {
+    for (var i = 0; i < videoList.length; ++i) {
+        videoList[i].muted = true;
+        changeRealtimeStatu($(videoList[i]).parent(), 'finding', 0)
+        $(videoList[i]).trigger('play');
+    }
+}
+$('.html5_realmonitor').bind("timeupdate", function () {
+
+    var currSecond = this.currentTime;
+    // console.log(currSecond);
+    var tolSecond = timeToSecond('12:00:00') + currSecond;
+    // console.log(tolSecond);
+    $(this).parent().find('.monitor_data').html('2015-10-13 ' + secondToTime(tolSecond));
+
+})
+
+setTimeout(function () {
+    console.log('start')
+    playTogether($('.html5_realmonitor'));
+}, 10000);
+setTimeout(function () {
+    changeRealtimeStatu($($('.html5_realmonitor')[0]).parent(), 'got', 5000);
+}, 120000);
+
 
 function jumpVideoPos(currResult) {
     var cArry = currResult.attr('class');
