@@ -3,6 +3,7 @@
     font-family: 'Futura Bold BT';
     src: url('../font/Futura Bold BT.ttf');
 }
+
 body {
     width: 1280px;
     height: 1024px;
@@ -150,9 +151,10 @@ body {
 
 .nav {
     width: 100%;
-    height: 30px;
+    height: 40px;
     background: #062331;
     background-image: url('../imgs/realtime_fun.png');
+    background-size: 100% 40px;
 }
 
 .nav ul {
@@ -162,8 +164,8 @@ body {
 }
 .nav ul li {
     width: 640px;
-    height: 30px;
-    line-height: 30px;
+    height: 40px;
+    line-height: 40px;
     text-align: center;
     float: left;
     font-size: 18px;
@@ -207,8 +209,9 @@ body {
     top: 0;
     width: 100%;
     height: 100%;
-    background: url('../imgs/bg.png');
-    
+    background-image: url('../imgs/bg_r.png');
+    background-color: #062332;
+    background-size: 4px 4px;
     display: block;
 }
 
@@ -218,42 +221,91 @@ body {
     width: 100%;
     min-height: 82px;
     height: auto; 
+    border-top: 8px solid #062332;
     /*background: red;*/
     background: url('../imgs/result_bg.png');
 }
 
 .track_target_container .track_target_head {
     height: 82px;
-    width: 55px;
-    line-height: 40px;
+    width: 35px;
+    line-height: 41px;
     text-align: center;
     float: left;
     font-size: 20px;
-    background: rgb(41, 128, 185);
+    background: #062332;
     color: #ecf0f1;
-    font-family: 'Heiti, Microsoft YaHei, Adobe 黑体 Std';
+    font-family: 'SimHei', 'Microsoft YaHei', 'Adobe 黑体 Std';
 }
 .track_target_container .track_target_list {
     float: left;
+    position: absolute;
+    bottom: 0;
+    left: 35px;
 }
 
-.one_track_target {
+/*.track_target_fun {
     float: left;
-    margin: 0 40px;
-    height: 80px;
+    height: 82px;
+    width: 100px;
+    margin-left: 30px;
+}
+.track_target_fun button {
+    padding: 0;
+    width: 50px;
+    height: 26px;
+    background: rgb(41, 128, 185);
+    color: #ecf0f1;
+    border: none;
+    border-radius: 20px;
+    font-family: 'SimHei';
+}
+.track_target_fun .clear_all_target {
+    margin: 28px 0;
+}*/
+
+.one_track_target {
+    min-width: 30px;
+    float: left;
+    margin: 0 0 0 50px;
+    height: 82px;
+    position: relative;
 }
 .one_track_target .one_track_img {
     height: 80px;
-    position: absolute;
-    bottom: 0;
     
     border: 1px solid #3498DB;
     transition: height 300ms, width 300ms;
+    position: absolute;
+    bottom: 0;
+    z-index: 5;
 }
-.one_track_target .one_track_img:hover {
+/*.one_track_target .one_track_img:hover {
     height: 144px;
     width: auto;
+}*/
+
+.one_track_target .delete_one_target {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    background: rgba(0, 0, 0, 0);
+    border-radius: 30px;
+    text-align: center;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0);
+    font-family: 'Microsoft YaHei';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transform: rotate(0);
+    cursor: pointer;
+    transition: 300ms;
+    z-index: 10;
 }
+
+
+/**********************************************/
 
 .mulmonitor_container {
     width: 1280px;
@@ -266,11 +318,18 @@ body {
     width: 640px;
     height: 398px;
     float: left;
-    background: url('../imgs/small_wrap.png');
-    background-repeat: no-repeat;
-    background-position: 4px 4px;
     margin-bottom: 30px;
-    /*transform: scale(1.3)*/
+    background: url('../imgs/small_wrap.png');
+}
+
+.mulmonitor_container .idle {
+    background: url('../imgs/small_wrap.png');
+}
+.mulmonitor_container .finding {
+    background: url('../imgs/small_wrap.png');
+}
+.mulmonitor_container .got {
+    background: url('../imgs/got_bg.png');
 }
 
 .html5_realmonitor,
@@ -279,6 +338,11 @@ body {
     height: 342px;
     
     margin: 12px 17px 0 17px;
+}
+
+.onemonitor video::-webkit-media-controls-enclosure {
+    /*禁用播放器控制栏的样式*/
+    display: none !important;
 }
 
 .real_tooltip, 
@@ -310,7 +374,15 @@ body {
 .monitor_statu {
     width: 23px;
     height: 23px;
+}
+.idle .monitor_statu {
+    background: url('../imgs/statu_idle.png');
+}
+.got .monitor_statu {
     background: url('../imgs/statu_got.png');
+}
+.finding .monitor_statu {
+    background: url('../imgs/statu_finding.png');
 }
 
 .monitor_capture {
@@ -318,10 +390,11 @@ body {
     height: 21px;
     line-height: 21px;
     color: #ecf0f1;
-    font-size: 19.7px;
-    font-family: 'Futura Bold BT';
+    font-size: 18px;
+    font-family: 'SimHei', 'Microsoft YaHei';
     background: #c1524f;
     border: 1px solid rgba(0, 0, 0, 0.3);
+    cursor: pointer;
     
     margin: 0 auto 0 130px;
 }
@@ -367,9 +440,11 @@ body {
 .detail_page .camera_container {
     width: 100%;
     height: 610px;
-    background: url('../imgs/bg.png');
+    background-color: #062332;
+    background-image: url('../imgs/bg_r.png');
     position: relative;
-    background-size: 1280px 610px;
+    background-size: 4px 4px;
+    background-repeat: repeat;
 }
 
 .camera_wrap_detail {
@@ -885,10 +960,20 @@ body {
     display: block;
     width: 226px;
     height: 6px;
-    margin: 5px 0;
-    background: url('../imgs/attach.png');;
+    margin: 8px 0;
+    background: url('../imgs/attach.png');
+    float: left;
 }
 
+.result_list .attach .resutl_time {
+    font-size: 16px;
+    line-height: 22px;
+    color: #2980b9;
+    font-family: 'DS-Digital';
+    display: block;
+    float: left;
+    margin: 0 0 0 10px;
+}
 
 /*:-webkit-full-screen video {
   width: 100%;

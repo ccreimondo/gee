@@ -171,7 +171,6 @@ var transform = function (element, value, key)
     {  
         element.style[prefix + key] = value;  
     });  
-
     return element;  
 }  
 
@@ -180,12 +179,6 @@ $('.result_item').click(function () {
     console.log(this);
 });
 
-var OPPOSITE = {
-    realtime_fun: 'reltime_monitor',
-    history_fun: 'detail_page'
-}
-
-
 // addListen to switch function
 $('.monitor_nav').bind('click', function () {
     // console.log($(this));
@@ -193,11 +186,10 @@ $('.monitor_nav').bind('click', function () {
 })
 
 function switchFunction(currFun) {
-
     // If in the current function
     if (currFun.hasClass('active')) return;
     
-    // switch
+    // switch to history
     if (currFun.hasClass('realtime_fun')) {
         $('.detail_page').css({display: 'none'});
         $('.history_fun').removeClass('active');
@@ -207,7 +199,9 @@ function switchFunction(currFun) {
         
         // switch the background
         $('.nav').css({background: 'url("./imgs/realtime_fun.png")'});
+        
     }
+    // switch to real-time video list
     else if (currFun.hasClass('history_fun')) {
         $('.realtime_monitor').css({display: 'none'});
         $('.realtime_fun').removeClass('active');
@@ -217,8 +211,62 @@ function switchFunction(currFun) {
         
         // switch the background
         $('.nav').css({background: 'url("./imgs/history_fun.png")'});
+        
+        // send history video list request
+        getHistoryVideoList('20131801');
+        // init layout
+        initHistoryListLayout();
     }
 }
+
+// For real-time monitor
+function changeRealtimeStatu(videoWrap, statu, duration) {
+    // remove current statu first
+    ['idle', 'got', 'finding'].forEach(function (className) {
+        videoWrap.removeClass(className);
+    });
+    // add changedTo statu
+    videoWrap.addClass(statu);
+    // action for each statu
+    switch (statu) {
+        case "idle":
+            changeToIdleStatu(videoWrap);
+            break;
+        case "finding":
+            changeToFindingStatu(videoWrap);
+            break;
+        case "got":
+            changeToGotStatu(videoWrap, duration);
+            break;
+        default:
+            console.log('Statu error!');
+    }
+}
+function changeToIdleStatu(videoWrap) {
+    videoWrap.css("background-image", "url('./imgs/small_wrap.png')");
+}
+function changeToFindingStatu(videoWrap) {
+    // videoWrap.css("background-image", "url('./imgs/finding_bg.png')");
+}
+function changeToGotStatu(videoWrap, duration) {
+    // sparkle
+    var sparkle = self.setInterval(function () {
+        videoWrap.css("background-image", "url('./imgs/got_bg.png')")
+        setTimeout(function () {
+            videoWrap.css("background-image", "url('./imgs/small_wrap.png')")
+        }, 300)
+    }, 600);
+    
+    // clear sparkle
+    setTimeout(function () {
+        window.clearInterval(sparkle);
+        // return finding statu
+        setTimeout(function () {
+            changeRealtimeStatu(videoWrap, 'finding');
+        }, 300)        
+    }, duration);
+}
+// changeToGotStatu($($('.idle')[1]), 2000);
 
 // addListener to switch result window
 $('.one_camera').bind('click', function () {
@@ -254,7 +302,7 @@ function switchResultWindow(currWindow) {
     $('.result_window').css({display: 'none'});
     $('.' + windowClassName).css({display: 'block'});
     
-    // band swiper
+    // band swiper again
     var swiper = new Swiper('.swiper-container', {
         scrollbar: '.swiper-scrollbar',
         scrollbarHide: true,
@@ -263,63 +311,7 @@ function switchResultWindow(currWindow) {
         spaceBetween: 30,
         grabCursor: true
     });
-    console.log($(windowClassName))
-}
-    
-// enter fullscreen
-function launchFullscreen(element) {
-    if(element.requestFullscreen) {
-        element.requestFullscreen();
-    } 
-    else if(element.mozRequestFullScreen) {
-        element.mozRequestFullScreen();
-    } 
-    else if(element.msRequestFullscreen){ 
-        element.msRequestFullscreen();  
-    } 
-    else if(element.oRequestFullscreen){
-        element.oRequestFullscreen();
-    }
-    else if(element.webkitRequestFullscreen) {
-        element.webkitRequestFullScreen();
-    }
-    else {
-        var docHtml  = document.documentElement;
-        var docBody  = document.body;
-        var videobox  = document.getElementById('videobox');
-        var  cssText = 'width:100%;height:100%;overflow:hidden;';
-        docHtml.style.cssText = cssText;
-        docBody.style.cssText = cssText;
-        videobox.style.cssText = cssText+';'+'margin:0px;padding:0px;';
-        document.IsFullScreen = true;
-    }
-}
-// exist full screen
-function exitFullscreen() {
-    if (document.exitFullscreen) {
-        document.exitFullscreen();
-    } 
-    else if (document.msExitFullscreen) {
-        document.msExitFullscreen();
-    } 
-    else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen();
-    } 
-    else if(document.oRequestFullscreen){
-        document.oCancelFullScreen();
-    } 
-    else if (document.webkitExitFullscreen){
-        document.webkitExitFullscreen();
-    } 
-    else{
-        var docHtml  = document.documentElement;
-        var docBody  = document.body;
-        var videobox  = document.getElementById('videobox');
-        docHtml.style.cssText = "";
-        docBody.style.cssText = "";
-        videobox.style.cssText = "";
-        document.IsFullScreen = false;
-    }
+    // console.log($(windowClassName))
 }
   
 // listner to video
@@ -349,6 +341,10 @@ $('.speedup').bind('click', function () {
 
 $('.maxum').bind('click', function () {
     // get video
+    var video = $(this).parent().prev().get(0);
+    launchFullscreen(video);
+});
+$('.monitor_mixum').bind('click', function () {
     var video = $(this).parent().prev().get(0);
     launchFullscreen(video);
 })
@@ -410,12 +406,6 @@ function switchDetailCamera(allCam, currCam) {
     var iArry = cArry[1].split('_');
     var i = iArry[2];
     
-    // remove abslute position first
-    // ["1", "2", "3", "4"].forEach(function (index)  
-    // {  
-    //     allCam.removeClass('camera_wrap_' + index);
-    // });
-    
     allCam.removeClass('camera_wrap_small');
     allCam.addClass('camera_wrap_detail');
     
@@ -462,8 +452,30 @@ $('.html5_video').bind('click', function () {
 $('.capture').bind('click', function () {
     captureTarget($(this).parent());
 })
-    
 
+// bind hover a track_target
+$('.one_track_target').hover(function () {
+    $(this).children('img').css({height: '144px'});
+    $(this).children('.delete_one_target').css({
+        'transform': 'rotate(45deg)',
+        background: 'rgba(0, 0, 0, 0.8)',
+        color: '#ecf0f1'
+    })
+}, function () {
+    $(this).children('img').css({height: '80px'});
+    $(this).children('.delete_one_target').css({
+        'transform': 'rotate(-45deg)',
+        background: 'rgba(0, 0, 0, 0)',
+        color: 'rgba(0, 0, 0, 0)'
+    })
+})
+
+// bind delete a track target form track target list
+$('.delete_one_target').bind('click', function () {
+    
+    // TODO, brute force
+    $(this).parent().css('display', 'none');
+})
 
 function initHistoryListLayout () {
     // video wrap style
@@ -482,10 +494,15 @@ function initHistoryListLayout () {
     $('.result_container').css({display: 'none'});
     $('.camera_container').css({height: '954px'});
     
+    // to update process bar, update time
+    var videoList = $('.html5_video');
+    for (var i = 0; i < videoList.length; ++i) {
+        videoList[i].currentTime += 0.001;
+    }
     // repaint progress tarack
     paintProgressTrack(POS);
 }
-initHistoryListLayout();
+
 $('.head').bind('click', function () {
     initHistoryListLayout();
 })
@@ -652,7 +669,6 @@ function jumpVideoPos(currResult) {
     $(videoWrapClass).css({display: 'block'});
     // drag the progress bar
     video.currentTime = frame / FPS;
-    
 }
 
 function paintCanvasMask(canvas, posX, posY, width, height) {
@@ -729,10 +745,18 @@ function paintOneTrack(canvas, posX, posY, radius) {
     ctx.fill();
 }
 
+// for real time
+$('.monitor_capture').bind('click', function () {
+   console.log(this) 
+});
+
 
 // Step 1, request history video list
-getHistoryVideoList('20131801');
 function getHistoryVideoList(data) {
+    
+    // if alread has a src, return
+    if ($($('.html5_video')[0]).attr('src') != '') return;
+
     var d = data;
     var url = ROOT + '/api/gee/videoshots/date:' + d;
     $.ajax({
@@ -741,13 +765,24 @@ function getHistoryVideoList(data) {
     })
     .done(function (res) {
         console.log(res);
-        loadVideo(res);
+        loadHistoryVideo(res);
     });
 }
 
-// loadVideo(VIDEOLIST);
-// Step 2, load video on the list
-function loadVideo(res) {
+// Step 1_2, request real-time video list
+function getRealtimeVideoList() {
+    var url = ROOT + '/api/gee/feeds/';
+    $.ajax({
+        type: 'GET',
+        url: url
+    })
+    .done(function (res) {
+        
+    })
+}
+
+// Step 2, load history video on the list
+function loadHistoryVideo(res) {
     var path = res.entrance;
     var targets = res.targets;
     
@@ -767,6 +802,14 @@ function loadVideo(res) {
         $(videoList[i]).parent().find('.end_time').html(endTime);
         $(videoList[i]).parent().find('.curr_time').addClass('start_time' + startTime);
     }
+}
+
+// Step 2_2, load readtime video on the list
+function loadRealtimeVideo(res) {
+    var path = res.entrance;
+    var targets = res.targets;
+    
+    var videoList = '';
 }
 
 // Step 3, capture the target image
@@ -817,6 +860,9 @@ function submitFramePosition(video) {
     slideAnalyzing($(tipClass).find('.analyzing'));
 
     setTimeout(startFlash, 700);
+    
+    // cann't do anything
+    $('.mask').css({display: 'block'});
 
     // sent request
     $.ajax({
@@ -826,6 +872,7 @@ function submitFramePosition(video) {
     .done(function (res) {
         // end flash
         endFlash();
+        $('.mask').css({display: 'none'});
         showTheTarget($('#container'), res);
     });
 }
@@ -918,29 +965,32 @@ function submitTarget(target) {
     
     TRANSCOLOR = self.setInterval(transColor, 1000);
     
-    // $.ajax({
-    //     type: 'GET',
-    //     url: ROOT + '/api/gee/personshots/' + personShotId
-    // })
-    // .done(function (res) {
-    //     // change the style
-    //     window.clearInterval(TRANSCOLOR);
-    //     $('.mask').css({display: 'none'});
-    //     $('.tips').css({display: 'none'});
-    //     
-    //     // handle result
-    //     handleResult(res);
-    // });
+    $.ajax({
+        type: 'POST',
+        url: ROOT + '/api/gee/personshots/' + personShotId
+    })
+    .done(function (res) {
+        // change the style
+        window.clearInterval(TRANSCOLOR);
+        $('.mask').css({display: 'none'});
+        $('.tips').css({display: 'none'});
+        
+        // handle result
+        console.log(res);
+        handleResult(res);
+    });
 }
 
-// Step 6, track target person, track in real-time monitor
+// Step 6_2, track target person, track in real-time monitor
 function trackTarget(target) {
     // a new target
     var oneTarget = $('<div class="one_track_target"></div>');
     var targetImg = $('<img class="one_track_img">');
+    var deleteTar = $('<div title="删除" class="delete_one_target">十</div>');
     targetImg.attr('src', target.find('img').attr('src'));
     // console.log(target.attr('src'));
     oneTarget.append(targetImg);
+    oneTarget.append(deleteTar);
     
     // push to track target list
     $('.track_target_list').append(oneTarget);
@@ -987,10 +1037,21 @@ function handleResult(res) {
         $(resultItem).addClass('frame' + targets[i].frame_pos);
         $(resultItem).addClass('index' + targets[i].camera.index);
         var tempPos = {
-            "index": targets[i].camera.index,
+            "index": targets[i].video_shot.index,
             "frame_pos": targets[i].frame_pos
         }
         POS.push(tempPos);
+        
+        // add attach
+        var attach = $('<div class="attach"></div>');
+        var att = $('<div class="att"></div>');
+        var resultTime = $('<div class="resutl_time"></div>');
+        // calculate the date
+        var startTime = targets[i].video_shot.time_range.start_time.split(' ');
+        var frameTime = secondToTime(timeToSecond(startTime[1]) + targets[i].frame_pos / 30) 
+        resultTime.html(startTime[0] + ' ' + frameTime);
+        attach.append(att);
+        attach.append(resultTime);
         
         // add url to img
         resultImg.attr('src', path + targets[i].filename);
@@ -1001,6 +1062,7 @@ function handleResult(res) {
                         
         resultItem.append($(resultMask));
         resultItem.append(resultImg);
+        resultItem.append(attach);
                 
         // append to all
         $('.result_window_0').find('.result_list').append(resultItem);
