@@ -200,6 +200,9 @@ function switchFunction(currFun) {
         // switch the background
         $('.nav').css({background: 'url("./imgs/realtime_fun.png")'});
         
+        // get real time video
+        getRealtimeVideoList2();
+        
     }
     // switch to real-time video list
     else if (currFun.hasClass('history_fun')) {
@@ -336,7 +339,16 @@ $('.play_pause').bind('click', function () {
 $('.speedup').bind('click', function () {
     var rate = $(this).parent().prev().get(0).playbackRate % 3;
     $(this).parent().prev().get(0).playbackRate = rate + 1;
-    console.log($(this).parent().prev().get(0).playbackRate);
+    var currRate = $(this).parent().prev().get(0).playbackRate; 
+    
+    var speedupRate = $(this).parent().find('.speedup_rate');
+    speedupRate.html('x' + currRate);
+    
+    speedupRate.css({display: 'block'});
+    
+    setTimeout(function () {
+        speedupRate.css({display: 'none'});
+    }, 500);
 });
 
 $('.maxum').bind('click', function () {
@@ -438,6 +450,8 @@ function switchDetailCamera(allCam, currCam) {
     // repaint process track with result
     paintProgressTrack(POS);
     
+    $('.video_list_fun').css('display', 'block');
+    
     slideAnalyzing($('.analyzing'));
 }
 
@@ -501,9 +515,11 @@ function initHistoryListLayout () {
     }
     // repaint progress tarack
     paintProgressTrack(POS);
+    // hidden video list function
+    $('.video_list_fun').css('display', 'none');
 }
 
-$('.head').bind('click', function () {
+$('.video_list_fun').bind('click', function () {
     initHistoryListLayout();
 })
 
@@ -594,16 +610,35 @@ var RESULT = {
     "count": 3,
     "targets": [
         {
-            "filename": "result3.png",
-            "rect": "10 10 20 20",
+            "filename": "result_1.jpg",
+            "rect": "10 10 0 0",
             "frame_name": "frame_id",
-            "frame_pos": 10,
+            "frame_pos": 450,
             "video": {
                 "fps": 30,
                 "frames": 800,
                 "time_range": {
-                    "start": "2015-10-10 22:10:00",
-                    "end": "2015-10-10 22:10:10"
+                    "start_time": "2015-10-10 14:00:00",
+                    "end_time": "2015-10-10 14:10:00"
+                }
+            },
+            "camera": {
+                "ip": "ip",
+                "address": "",
+                "index": 0
+            }
+        },
+        {
+            "filename": "result_2.jpg",
+            "rect": "10 10 0 0",
+            "frame_name": "frame_id",
+            "frame_pos": 8580,
+            "video": {
+                "fps": 30,
+                "frames": 800,
+                "time_range": {
+                    "start_time": "2015-10-10 14:00:00",
+                    "end_time": "2015-10-10 14:10:00"
                 }
             },
             "camera": {
@@ -613,35 +648,16 @@ var RESULT = {
             }
         },
         {
-            "filename": "result3.png",
-            "rect": "10 10 20 20",
+            "filename": "result_3.jpg",
+            "rect": "10 10 0 0",
             "frame_name": "frame_id",
-            "frame_pos": 800,
+            "frame_pos": 14920,
             "video": {
                 "fps": 30,
                 "frames": 800,
                 "time_range": {
-                    "start": "2015-10-10 22:10:00",
-                    "end": "2015-10-10 22:10:10"
-                }
-            },
-            "camera": {
-                "ip": "ip",
-                "address": "",
-                "index": 2
-            }
-        },
-        {
-            "filename": "result3.png",
-            "rect": "10 10 20 20",
-            "frame_name": "frame_id",
-            "frame_pos": 300,
-            "video": {
-                "fps": 30,
-                "frames": 800,
-                "time_range": {
-                    "start": "2015-10-10 22:10:00",
-                    "end": "2015-10-10 22:10:10"
+                    "start_time": "2015-10-10 14:00:00",
+                    "end_time": "2015-10-10 14:10:00"
                 }
             },
             "camera": {
@@ -657,6 +673,8 @@ var RESULT = {
 function playTogether(videoList) {
     for (var i = 0; i < videoList.length; ++i) {
         videoList[i].muted = true;
+        // form begain
+        videoList[i].currentTime = 0;
         changeRealtimeStatu($(videoList[i]).parent(), 'finding', 0)
         $(videoList[i]).trigger('play');
     }
@@ -671,13 +689,16 @@ $('.html5_realmonitor').bind("timeupdate", function () {
 
 })
 
-setTimeout(function () {
-    console.log('start')
-    playTogether($('.html5_realmonitor'));
-}, 10000);
-setTimeout(function () {
-    changeRealtimeStatu($($('.html5_realmonitor')[0]).parent(), 'got', 5000);
-}, 120000);
+// TODO, for screenCAP
+function getRealtimeVideoList2 () {
+    setTimeout(function () {
+        console.log('start')
+        playTogether($('.html5_realmonitor'));
+    }, 0);
+    setTimeout(function () {
+        changeRealtimeStatu($($('.html5_realmonitor')[0]).parent(), 'got', 5000);
+    }, 110000);
+}
 
 
 function jumpVideoPos(currResult) {
@@ -695,6 +716,8 @@ function jumpVideoPos(currResult) {
     $(videoWrapClass).css({display: 'block'});
     // drag the progress bar
     video.currentTime = frame / FPS;
+    
+    console.log(video.currentTime);
 }
 
 function paintCanvasMask(canvas, posX, posY, width, height) {
@@ -706,6 +729,7 @@ function paintCanvasMask(canvas, posX, posY, width, height) {
 }
 
 function paintProgressTrack(pos) {
+    console.log(pos);
     // before paint, clear all
     $('.track_unit').empty();
     
@@ -781,7 +805,7 @@ $('.monitor_capture').bind('click', function () {
 function getHistoryVideoList(data) {
     
     // if alread has a src, return
-    if ($($('.html5_video')[0]).attr('src') != '') return;
+    // if ($($('.html5_video')[0]).attr('src') != '') return;
 
     var d = data;
     var url = ROOT + '/api/gee/videoshots/date:' + d;
@@ -817,7 +841,9 @@ function loadHistoryVideo(res) {
         // load video fisrt
         console.log(targets[i].id);
         $(videoList[i]).addClass(targets[i].id);
-        $(videoList[i]).attr('src', path + targets[i].filename);
+        
+        // TODO
+        // $(videoList[i]).attr('src', ROOT + path + targets[i].filename);
         
         // change the camera data
         var startTime = targets[i].time_range.start_time.split(' ')[1];
@@ -870,8 +896,9 @@ function submitFramePosition(video) {
     
     var vId = video.attr('class').split(' ')[1];
     
-    var url = ROOT + '/api/gee/personshots/' + vId + '/' + framePos;
+    var url = ROOT + '/api/gee/personshots/' + vId +  '/' + framePos + '/';
     
+    console.log(url)
     // change the style
     var cArry = video.parent().attr('class').split(' ')[1];
     // console.log(video.attr('class').split(' '))
@@ -890,6 +917,7 @@ function submitFramePosition(video) {
     // cann't do anything
     $('.mask').css({display: 'block'});
 
+    console.log(url)
     // sent request
     $.ajax({
         type: 'GET',
@@ -897,6 +925,7 @@ function submitFramePosition(video) {
     })
     .done(function (res) {
         // end flash
+        console.log(url);
         endFlash();
         $('.mask').css({display: 'none'});
         showTheTarget($('#container'), res);
@@ -905,7 +934,7 @@ function submitFramePosition(video) {
 
 // Step 5, show all target in this frame 
 function showTheTarget(container, res) {
-    var path = res.entrance;
+    var path = ROOT + res.entrance;
     var count = res.count;
     var targets = res.targets;
     
@@ -991,19 +1020,30 @@ function submitTarget(target) {
     
     TRANSCOLOR = self.setInterval(transColor, 1000);
     
-    $.ajax({
-        type: 'POST',
-        url: ROOT + '/api/gee/personshots/' + personShotId
-    })
-    .done(function (res) {
-        // change the style
+    // $.ajax({
+    //     type: 'POST',
+    //     url: ROOT + '/api/gee/personshots/fake/' + personShotId
+    // })
+    // .done(function (res) {
+    //     // change the style
+    //     window.clearInterval(TRANSCOLOR);
+    //     $('.mask').css({display: 'none'});
+    //     $('.tips').css({display: 'none'});
+    //     
+    //     // handle result
+    //     console.log(res);
+    //     handleResult(res);
+    // });
+    
+    // fake 
+    setTimeout(function () {
         window.clearInterval(TRANSCOLOR);
         $('.mask').css({display: 'none'});
         $('.tips').css({display: 'none'});
         
         // handle result
-        console.log(res);
-        handleResult(res);
+        console.log(RESULT);
+        handleResult(RESULT);
     });
 }
 
@@ -1059,11 +1099,12 @@ function handleResult(res) {
         var resultMask = document.createElement('canvas');
         $(resultMask).addClass('result_mask');
         
+        targets[i].camera.index += 1;
         // store the frame inf and camera inf
         $(resultItem).addClass('frame' + targets[i].frame_pos);
         $(resultItem).addClass('index' + targets[i].camera.index);
         var tempPos = {
-            "index": targets[i].video_shot.index,
+            "index": targets[i].camera.index,
             "frame_pos": targets[i].frame_pos
         }
         POS.push(tempPos);
