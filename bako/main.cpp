@@ -41,10 +41,6 @@ int main(int argc, char *argv[])
 
 void Test()
 {
-#ifndef NOGDEBUG
-    cout << IP2HexStr("192.168.3.1") << endl;
-    cout << FormatUnsignedInt(10, 1) << endl;
-#endif
     const string kDirPrefix = "/media/reimondo/HDD/Workspace/Projects/gee/";
     string video_stream_addr;
 
@@ -54,7 +50,7 @@ void Test()
     // static video files for debugging
     vector<string> video_list;
     // video_list.push_back("gjw_x264.mp4");
-    // video_list.push_back("TEST.mkv");
+    video_list.push_back("TEST.mkv");
     // video_list.push_back("DSC_4557_x264.mkv");
     // video_list.push_back("DSC_4549_x264.mkv");
     // video_list.push_back("DSC_4549_x264.mp4");

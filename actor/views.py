@@ -186,7 +186,7 @@ def hello():
 @app.route("/api/gee/feeds/")
 def get_gee_feeds():
     res = {
-        "entrance": "http://10.250.94.25:5000/api/gee/feeds/",
+        "entrance": "/api/gee/feeds/",
         "count": 0,
         "targets": []
     }
@@ -197,7 +197,7 @@ def get_gee_feeds():
 def get_gee_video_shots(date):
     targets = fetch_records_list(date)
     res = {
-        "entrance": "http://10.250.94.25:5000/static/video/",
+        "entrance": "/static/video/",
         "count": 0,
         "targets": targets
     }
@@ -213,7 +213,7 @@ def get_gee_video_shot(video_id):
 @app.route("/api/gee/personshots/<vid>/<frame_pos>/")
 def get_gee_person_shots_archive(vid, frame_pos):
     res = {
-        "entrance": "http://10.250.94.25:5000/static/tmp/person-shots/",
+        "entrance": "/static/tmp/person-shots/",
         "count": 0,
         "targets": []
     }
@@ -257,7 +257,7 @@ def get_gee_person_shots(person_shot_id):
     # search person in database with target person shot
     if request.method == "POST":
         res = {
-            "entrance": "http://10.250.94.25:5000/api/gee/keyframes/",
+            "entrance": "/api/gee/keyframes/",
             "count": 0,
             "targets": []
         }
