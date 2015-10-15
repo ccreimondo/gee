@@ -197,11 +197,12 @@ vector<Rect> HumanDetect(const Mat &frame)
         //gpu::GpuMat frame_gpu(frame);
         //gpu_hog.detectMultiScale(frame_gpu, found_rects, 0, Size(8, 8), Size(0, 0), 1.05, 2);
     } catch (const char *e) {
+
         LogError("No gpu support. Move to cpu hog.");
-        HOGDescriptor cpu_hog;
-        cpu_hog.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
-        cpu_hog.detectMultiScale(frame, found_rects, 0, Size(8,8), Size(32, 32), 1.05, 2);
     }
+    HOGDescriptor cpu_hog;
+    cpu_hog.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
+    cpu_hog.detectMultiScale(frame, found_rects, 0, Size(8,8), Size(32, 32), 1.05, 2);
 
     for (size_t i = 0; i < found_rects.size(); i++) {
         Rect r = found_rects[i];

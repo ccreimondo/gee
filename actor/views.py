@@ -70,11 +70,13 @@ def fetch_records_list(date):
     for idx, vid in enumerate(video_shots):
         video_shot = r.hgetall(vid)
         id_f = vid.split(':')[1]
-        start_time = datetime.strptime(video_shot["start_time"], raw_time_fmt)
-        end_time = datetime.strptime(video_shot["end_time"], raw_time_fmt)
+        # start_time = datetime.strptime(video_shot["start_time"], raw_time_fmt)
+        # end_time = datetime.strptime(video_shot["end_time"], raw_time_fmt)
+        start_time = "2015-10-10 14:00:00"
+        end_time = "2015-10-10 14:10:00"
         time_range_f = {
-            "start_time": start_time.strftime(time_fmt),
-            "end_time": end_time.strftime(time_fmt)
+            "start_time": start_time,
+            "end_time": end_time
         }
         camera_f = {
             "id": video_shot["cam_id"],
@@ -112,8 +114,8 @@ def fetch_frame(vid, frame_pos):
                                         video_shot_where["filename"])
 
     vs_frames = video_shot["frames"]
-    if int(frame_pos) > int(vs_frames):
-        return None
+    #if int(frame_pos) > int(vs_frames):
+    #    return None
 
     cap = cv2.VideoCapture(video_shot_full_path)
     cap.set(cv2.cv.CV_CAP_PROP_POS_FRAMES, float(frame_pos))
@@ -295,6 +297,135 @@ def get_gee_person_shots(person_shot_id):
                 continue
         res["count"] = len(res["targets"])
         return jsonify(res)
+
+
+id_pool = [
+    {
+        "id": "c0a87193201510101420000050100",
+        "frame": "c0a871932015101014200000501",
+        "frame_pos": "500",
+        "rect": "",
+        "video_shot": {
+            "fps": "30",
+            "frames": "18078",
+            "codec": "h264",
+            "format": "mp4",
+            "time_range": {
+                "start_time": "2015-10-10 14:00:00",
+                "end_time": "2015-10-10 14:10:00"
+            }
+        },
+        "camera": {
+            "index": 0,
+            "ip": "192.168.113.147",
+            "address": ""
+        }
+    },
+    {
+        "id": "c0a87194201510101420100827000",
+        "frame": "c0a871942015101014201008270",
+        "frame_pos": "18028",
+        "rect": "",
+        "video_shot": {
+            "fps": "30",
+            "frames": "1080000",
+            "codec": "h264",
+            "format": "mp4",
+            "time_range": {
+                "start_time": "2015-10-10 14:00:00",
+                "end_time": "2015-10-10 14:10:00"
+            }
+        },
+        "camera": {
+            "index": 1,
+            "ip": "192.168.113.148",
+            "address": ""
+        }
+    },
+    {
+        "id": "c0a87193201510101420000050100",
+        "frame": "c0a871932015101014200000501",
+        "frame_pos": "500",
+        "rect": "",
+        "video_shot": {
+            "fps": "30",
+            "frames": "18078",
+            "codec": "h264",
+            "format": "mp4",
+            "time_range": {
+                "start_time": "2015-10-10 14:00:00",
+                "end_time": "2015-10-10 14:10:00"
+            }
+        },
+        "camera": {
+            "index": 0,
+            "ip": "192.168.113.147",
+            "address": ""
+        }
+    },
+    {
+        "id": "c0a87194201510101420100827000",
+        "frame": "c0a871942015101014201008270",
+        "frame_pos": "18028",
+        "rect": "",
+        "video_shot": {
+            "fps": "30",
+            "frames": "1080000",
+            "codec": "h264",
+            "format": "mp4",
+            "time_range": {
+                "start_time": "2015-10-10 14:00:00",
+                "end_time": "2015-10-10 14:10:00"
+            }
+        },
+        "camera": {
+            "index": 1,
+            "ip": "192.168.113.148",
+            "address": ""
+        }
+    }
+]
+
+
+def fetch_and_save_frame(vid, frame_pos):
+    filename = "{}{}.{}".format(vid, frame_pos, "jpeg")
+    person_shot_full_path = os.path.join("actor/static/tmp/pershon-shots-tmp",
+                                         filename)
+
+    cap = cv2.VideoCapture(person_shot_full_path)
+    cap.set(cv2.cv.CV_CAP_PROP_POS_FRAMES, float(frame_pos))
+
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if ret:
+            cv2.imwrite(person_shot_full_path, frame)
+
+    return None
+
+
+@app.route("/api/gee/personshots/fake/<person_shot_id>", methods=["GET", "POST"])
+def get_gee_fake_person_shots(person_shot_id):
+    if request.method == "GET":
+        abort(500)
+
+    # search person in database with target person shot
+    if request.method == "POST":
+        res = dict(entrance="/api/gee/keyframes/fake/",
+                   count=0,
+                   targets=id_pool)
+
+        res["count"] = len(res["targets"])
+        return jsonify(res)
+
+
+@app.route("/api/gee/keyframes/fake/<keyframe_id>")
+def get_gee_fake_keyframe(keyframe_id):
+    for e in id_pool:
+        if e["frame"] == keyframe_id:
+            fetch_and_save_frame(keyframe_id[9:-5], keyframe_id[-5:-1])
+            ps_file = "{}{}.{}".format("actor/static/tmp/person-shot-tmp/",
+                                       keyframe_id, "jpeg")
+            return send_file(ps_file, mimetype="image/jpeg")
 
 
 @app.route("/api/gee/keyframes/<keyframe_id>")
