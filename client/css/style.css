@@ -347,6 +347,7 @@ body {
 
 .real_tooltip, 
 .camera_wrap_small .tooltip {
+    position: relative;
     width: 606px;
     height: 23px;
     background: url('../imgs/mask.png');
@@ -363,6 +364,21 @@ body {
     font-size: 18.7px;
     color: #F1E75B;
     text-align: center;
+}
+
+.tooltip .speedup_rate {
+    position: absolute;
+    left: calc(50% - 35px);
+    top: -40px;
+    width: 70px;
+    height: 30px;
+    background: rgba(0, 0, 0, 0.5);
+    line-height: 30px;
+    color: #ecf0f1;
+    text-align: center;
+    font-size: 20px;
+    font-family: 'SimHei';
+    display: none;
 }
 
 .monitorid,
@@ -428,6 +444,19 @@ body {
     z-index: 1;
     display: none;
 }
+
+.detail_page .video_list_fun {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 20px;
+    right: 70px;
+    background: url('../imgs/video_list.jpg');
+    background-size: 40px 40px;
+    cursor: pointer;
+    z-index: 100;
+}
+
 .detail_page .target_img {
     position: absolute;
     top: 120px;
@@ -490,6 +519,7 @@ body {
     height: 30px;
     background: url('../imgs/mask.png');
     margin: 0 10px 10px 10px;
+    position: relative;
 }
 
 .camera_wrap_detail .controllor {
