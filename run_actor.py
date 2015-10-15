@@ -1,5 +1,15 @@
+#! .pyenv/bin/python2
 from actor import app
 from flask import request, redirect
+
+# for debug
+@app.before_request
+def add_static():
+    if not app.debug:
+        return
+    path = request.path
+    if path == "/":
+        return redirect("/static/index.html")
 
 
 # allow cors for quick development
@@ -16,7 +26,7 @@ def add_cors(res):
 
 
 def main():
-    app.run(host="127.0.0.1", port=8000, debug=True, threaded=True)
+    app.run(host="127.0.0.1", port=5000, debug=True, threaded=True)
 
 
 if __name__ == "__main__":

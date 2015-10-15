@@ -1,7 +1,7 @@
 // SLIDE & TRANSCOLOR are for animate 
 var SLIDE;
 var TRANSCOLOR;
-var ROOT = 'http://10.250.94.25:5000';
+var ROOT = '';
 var FPS = 30;
 var POS = [];
 

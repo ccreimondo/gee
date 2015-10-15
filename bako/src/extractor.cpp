@@ -1,3 +1,4 @@
+#include <opencv2/gpu/gpu.hpp>
 #include "extractor.h"
 #include "memcache.h"
 #include "sugar/sugar.h"
@@ -39,6 +40,7 @@ void Extractor::handler(const IPCamera ip_camera, const string &video_id,
     if (HistDiff(frame_refer_, frame)) {
 #ifndef NOGDEBUG
         cout << "New keyframe!" << endl;
+        imshow("Keyframe", frame);
 #endif
         // cache the new keyframe
         filename_ = ip_camera.get_id() +
@@ -58,23 +60,29 @@ void Extractor::handler(const IPCamera ip_camera, const string &video_id,
 
         for (size_t i = 0; i < found_rects.size(); i++) {
 #ifndef NOGDEBUG
-            // Mat frame_show = frame.clone();
-            // rectangle(frame_show, found_rects[i], Scalar(0 ,255, 255));
-            // imshow("rect", frame_show);
+            Mat frame_show = frame.clone();
+            rectangle(frame_show, found_rects[i], Scalar(0 ,255, 255));
+            imshow("cut", frame_show);
 #endif
 
             Mat person_image;
 
             try {
-                person_image = frame(found_rects[i]).clone();
+                frame(found_rects[i]).copyTo(person_image);
+                // person_image = frame.clone(found_rects[i]);
             } catch (const char *e) {
                 LogError(e);
             }
 
+#ifndef NOGDEBUG
+            imshow("person shot raw", person_image);
+#endif
+
             resize(person_image, person_image, Size(48, 128), 0, 0, INTER_AREA);
 
 #ifndef NOGDEBUG
-                imshow("person shot", person_image);
+            imshow("person shot", person_image);
+            cout << "Human detect done!" << endl;
 #endif
 
             // get feature of each person image
@@ -178,11 +186,22 @@ bool HistDiff(const Mat &frame_t1, const Mat &frame_t2)
 vector<Rect> HumanDetect(const Mat &frame)
 {
     vector<Rect> found_rects, found_rects_filtered;
-    // prepare HOG descripter
-    HOGDescriptor hog;
-    hog.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
 
-    hog.detectMultiScale(frame, found_rects, 0, Size(8,8), Size(0, 0), 1.05, 2);
+    // prepare HOG descripter
+    try {
+        //gpu::HOGDescriptor gpu_hog(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9,
+        //                           cv::gpu::HOGDescriptor::DEFAULT_WIN_SIGMA, 0.2, true,
+        //                           cv::gpu::HOGDescriptor::DEFAULT_NLEVELS);
+        //gpu_hog.setSVMDetector(gpu::HOGDescriptor::getDefaultPeopleDetector());
+
+        //gpu::GpuMat frame_gpu(frame);
+        //gpu_hog.detectMultiScale(frame_gpu, found_rects, 0, Size(8, 8), Size(0, 0), 1.05, 2);
+    } catch (const char *e) {
+        LogError("No gpu support. Move to cpu hog.");
+        HOGDescriptor cpu_hog;
+        cpu_hog.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
+        cpu_hog.detectMultiScale(frame, found_rects, 0, Size(8,8), Size(32, 32), 1.05, 2);
+    }
 
     for (size_t i = 0; i < found_rects.size(); i++) {
         Rect r = found_rects[i];

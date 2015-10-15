@@ -34,7 +34,7 @@ void VideoCacher::init(IPCamera ip_camera,
     filename_ = cam_id_ + video_id_ + "." + format_;
     Size v_size(video_stream_meta_.solution[0],
                 video_stream_meta_.solution[1]);
-    writer_.open(path_ + filename_, CV_FOURCC('x', '2', '6', '4'),
+    writer_.open(path_ + filename_, CV_FOURCC('X', '2', '6', '4'),
                 video_stream_meta_.fps, v_size);
     if (!writer_.isOpened()) {
         LogError("Fail to open /tmp/gee/video.");

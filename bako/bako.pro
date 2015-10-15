@@ -4,7 +4,6 @@ CONFIG -= qt
 CONFIG += c++11
 
 INCLUDEPATH += \
-        /usr/local/include/opencv2 \
         /usr/include/boost \
         /usr/include/python2.7 \
 

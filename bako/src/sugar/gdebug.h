@@ -1,7 +1,7 @@
 #ifndef GDEBUG_H
 #define GDEBUG_H
 
-#define NOGDEBUG
+// #define NOGDEBUG
 
 #ifndef NOGDEBUG
 

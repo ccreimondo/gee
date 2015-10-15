@@ -1,3 +1,4 @@
+#include <opencv2/opencv.hpp>
 #include "getfeature.h"
 
 GetFeature::GetFeature() {
