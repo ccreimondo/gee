@@ -16,7 +16,7 @@ VideoCacher::VideoCacher()
     filename_ = "";
     frames_counter_ = 0;
     codec_ = "h264";
-    format_ = "mp4";
+    format_ = "mkv";
 }
 
 void VideoCacher::init(IPCamera ip_camera,
@@ -37,7 +37,7 @@ void VideoCacher::init(IPCamera ip_camera,
     writer_.open(path_ + filename_, CV_FOURCC('X', '2', '6', '4'),
                 video_stream_meta_.fps, v_size);
     if (!writer_.isOpened()) {
-        LogError("Fail to open /tmp/gee/video.");
+        LogError("Video stream writer init fail.");
         exit(1);
     }
 

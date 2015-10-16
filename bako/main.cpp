@@ -1,3 +1,6 @@
+// *nix
+#include <unistd.h>
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -33,8 +36,12 @@ int main(int argc, char *argv[])
         exit(0);
     }
 
+    char buf[1024];
+    // system call
+    getcwd(buf, 1024);
+    sprintf(buf, "%s%s%s", buf, "/", argv[1]);
     IPCamera fake_ip_camera("192.168.113.147", "SEC 113");
-    VideoStreamHandler(argv[1], fake_ip_camera);
+    VideoStreamHandler(buf, fake_ip_camera);
 
     exit(0);
 }
@@ -49,13 +56,11 @@ void Test()
 
     // static video files for debugging
     vector<string> video_list;
-    // video_list.push_back("gjw_x264.mp4");
-    video_list.push_back("TEST.mkv");
-    // video_list.push_back("DSC_4557_x264.mkv");
-    // video_list.push_back("DSC_4549_x264.mkv");
-    // video_list.push_back("DSC_4549_x264.mp4");
-    // video_list.push_back("DSC_4565_x264.mp4");
-    // video_list.push_back("DSC_4565_x264.mkv");
+    video_list.push_back("gjw_x264.mp4");
+    // video_list.push_back("Monitor_1_x264.mp4");
+    // video_list.push_back("Monitor_2_x264.mp4");
+    // video_list.push_back("Monitor_3_modify_x264.mp4");
+    // video_list.push_back("Monitor_4_x264.mp4");
     for (size_t i = 0; i < video_list.size(); ++i) {
         video_stream_addr = kDirPrefix + "example/videos/" + video_list[i];
         string camera_ip("192.168.3.");

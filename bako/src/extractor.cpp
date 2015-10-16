@@ -1,4 +1,7 @@
-#include <opencv2/gpu/gpu.hpp>
+// opencv 3
+#include <opencv2/cudaobjdetect.hpp>
+// opencv 2
+// #include <opencv2/gpu/gpu.hpp>
 #include "extractor.h"
 #include "memcache.h"
 #include "sugar/sugar.h"
@@ -189,17 +192,25 @@ vector<Rect> HumanDetect(const Mat &frame)
 
     // prepare HOG descripter
     try {
-        //gpu::HOGDescriptor gpu_hog(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9,
-        //                           cv::gpu::HOGDescriptor::DEFAULT_WIN_SIGMA, 0.2, true,
-        //                           cv::gpu::HOGDescriptor::DEFAULT_NLEVELS);
-        //gpu_hog.setSVMDetector(gpu::HOGDescriptor::getDefaultPeopleDetector());
+        // for OpenCV 2.4.9
+        // gpu::HOGDescriptor gpu_hog(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9,
+        //                            cv::gpu::HOGDescriptor::DEFAULT_WIN_SIGMA, 0.2, true,
+        //                            cv::gpu::HOGDescriptor::DEFAULT_NLEVELS);
+        // gpu_hog.setSVMDetector(gpu::HOGDescriptor::getDefaultPeopleDetector());
 
-        //gpu::GpuMat frame_gpu(frame);
-        //gpu_hog.detectMultiScale(frame_gpu, found_rects, 0, Size(8, 8), Size(0, 0), 1.05, 2);
+        // gpu::GpuMat frame_gpu(frame);
+        // gpu_hog.detectMultiScale(frame_gpu, found_rects, 0, Size(8, 8), Size(0, 0), 1.05, 2);
+
+        // for OpenCV 3.0
+        // Ptr<cuda::HOG> gpu_hog = cuda::HOG::create();
+        // gpu_hog->setSVMDetector(gpu_hog->getDefaultPeopleDetector());
+
+        // cuda::GpuMat gpu_img(frame);
+        // gpu_hog->detectMultiScale(gpu_img, found_rects);
     } catch (const char *e) {
-
         LogError("No gpu support. Move to cpu hog.");
     }
+
     HOGDescriptor cpu_hog;
     cpu_hog.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
     cpu_hog.detectMultiScale(frame, found_rects, 0, Size(8,8), Size(32, 32), 1.05, 2);
